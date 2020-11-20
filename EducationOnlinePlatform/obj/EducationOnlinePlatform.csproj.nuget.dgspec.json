@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Олег\\Source\\Repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj": {}
+    "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Олег\\Source\\Repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj": {
+    "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Олег\\Source\\Repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj",
+        "projectUniqueName": "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj",
         "projectName": "EducationOnlinePlatform",
-        "projectPath": "C:\\Users\\Олег\\Source\\Repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj",
+        "projectPath": "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj",
         "packagesPath": "C:\\Users\\Олег\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Олег\\Source\\Repos\\web-api\\EducationOnlinePlatform\\obj\\",
+        "outputPath": "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -58,6 +58,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[3.1.4, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
             }
           },
           "imports": [
