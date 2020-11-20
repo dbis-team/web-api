@@ -12,7 +12,7 @@
     "EducationOnlinePlatform": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "User",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
