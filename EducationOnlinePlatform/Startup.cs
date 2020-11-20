@@ -46,14 +46,12 @@ namespace EducationOnlinePlatform
             var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
-            app.UseSwagger(option =>
-            {
-                option.RouteTemplate = swaggerOptions.JsonRoute;
-            });
+            app.UseSwagger();
 
             app.UseSwaggerUI(option =>
             {
                 option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
+                option.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
