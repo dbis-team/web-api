@@ -40,7 +40,7 @@ namespace EducationOnlinePlatform.Controllers
         // POST: educationSet/register
         [HttpPost]
         [Route("add")]
-        public string AddEducationSet([FromBody]EducationSet educationSet)
+        public string AddEducationSet([FromBody][Bind("Name")] EducationSet educationSet)
         {
             var savedRows = 0;
             if (ModelState.IsValid)
@@ -61,7 +61,7 @@ namespace EducationOnlinePlatform.Controllers
 
         // PUT: /educationSet/update/5
         [HttpPut("update/{id}")]
-        public string UpdateEducationSet(Guid id, [FromBody] EducationSet educationSetChanged)
+        public string UpdateEducationSet(Guid id, [FromBody][Bind("Name")] EducationSet educationSetChanged)
         {
             var savedRows = 0;
             if(id == null)
