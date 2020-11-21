@@ -17,12 +17,11 @@ namespace EducationOnlinePlatform.Models
         [Required]
         public string Email { get; set; }
 
-        public Guid RoleId { get; set; }
-        public Role Role { get; set; }
+        public bool IsSysAdmin { get; set; }
 
         public List<UserInEducationSet> UserInEducationSet { get; set; }
 
-        public User()
+        public User() 
         {
             UserInEducationSet = new List<UserInEducationSet>();
         }

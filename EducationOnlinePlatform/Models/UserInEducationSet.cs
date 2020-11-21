@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace EducationOnlinePlatform.Models
 {
-    //Описывает в какие эдукейшин сеты добавлены юзеры и какие у них в нем роли(преподоваитель может быть студентом в другом эдукейшин сете)
     public class UserInEducationSet
     {
         [Key]
@@ -15,5 +14,8 @@ namespace EducationOnlinePlatform.Models
         public User User { get; set; }
         public Guid EducationSetId { get; set; }
         public EducationSet EducationSet { get; set; }
+
+        public Role UserRole { get; set; }
+
     }
 }

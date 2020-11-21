@@ -25,24 +25,41 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("{id}")]
         public string GetSubject(Guid id)
         {
+            if (id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var subject = db.Subjects.FirstOrDefault(e => e.Id == id);
+            if(subject == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+            }
             return System.Text.Json.JsonSerializer.Serialize<Subject>(subject);
         }
 
         // POST: subject/add
         [HttpPost]
         [Route("add")]
-        public bool AddSubject([FromBody] Subject subject)
+        public string AddSubject([FromBody][Bind("Name,EducationSetId")] Subject subject)
         {
-            var subjects = db.Subjects;
-            subjects.Add(subject);
-            return db.SaveChanges() > 0;
+            var savedRows = 0;
+            if (ModelState.IsValid)
+            {
+                var subjects = db.Subjects;
+                subjects.Add(subject);
+                savedRows = db.SaveChanges();
+            }
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
         }
 
         // PUT: subject/update/5
         [HttpPut("update/{id}")]
-        public bool UpdateSubject(Guid id, [FromBody] Subject subjectChanged)
+        public string UpdateSubject(Guid id, [FromBody][Bind("Name,EducationSetId")] Subject subjectChanged)
         {
+            if (id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
             {
@@ -50,20 +67,34 @@ namespace EducationOnlinePlatform.Controllers
                 {
                     subject.Name = subjectChanged.Name;
                 }
+                var savedRows = db.SaveChanges();
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
             }
-            return db.SaveChanges() > 0;
+            else
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+            }
         }
 
         // DELETE: subject/delete/5
         [HttpDelete("delete/{id}")]
-        public bool DeleteSubject(Guid id)
+        public string DeleteSubject(Guid id)
         {
+            if (id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
             {
                 db.Subjects.Remove(subject);
             }
-            return db.SaveChanges() > 0;
+            else
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+            }
+            var savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
         }
     }
 }

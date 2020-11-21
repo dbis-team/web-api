@@ -23,58 +23,88 @@ namespace EducationOnlinePlatform.Controllers
 
         // GET: User/5
         [HttpGet("{id}")]
-        public string GetUser(Guid id)
+        public string GetUser(Guid? id)
         {
+            if (id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var user = db.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "User Not found" });
+            }
             return System.Text.Json.JsonSerializer.Serialize<User>(user);
         }
 
         // POST: User/register
         [HttpPost]
         [Route("register")]
-        public bool RegisterUser([FromBody]User user)
+        public string RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User user)
         {
-            var users = db.Users;
-            if (users.FirstOrDefault(u => u.Email == user.Email) == null)
+            var savedRows = 0;
+            if (ModelState.IsValid)
             {
-                users.Add(user);
+                var users = db.Users;
+                if (users.FirstOrDefault(u => u.Email == user.Email) == null)
+                {
+                    users.Add(user);
+                    savedRows = db.SaveChanges();
+                }
             }
-            return db.SaveChanges() > 0;
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved Rows " + savedRows });
         }
 
         // PUT: /User/update/5
         [HttpPut("update/{id}")]
-        public bool UpdateUser(Guid id, [FromBody] User userChanged)
+        public string UpdateUser(Guid id, [FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User userChanged)
         {
-            var user = db.Users.FirstOrDefault(u => u.Id == id);
-            if (user != null)
+            if (id == null)
             {
-                if (userChanged.UserName != user.UserName)
-                {
-                    user.UserName = userChanged.UserName;
-                }
-                if (userChanged.Password != user.Password)
-                {
-                    user.Password = userChanged.Password;
-                }
-                if (user.Email != userChanged.Email)
-                {
-                    user.Email = userChanged.Email;
-                }
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
             }
-            return db.SaveChanges() > 0;
+
+            var user = db.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "User Not found" });
+            }
+            if (userChanged.UserName != user.UserName)
+            {
+                user.UserName = userChanged.UserName;
+            }
+            if (userChanged.Password != user.Password)
+            {
+                user.Password = userChanged.Password;
+            }
+            if (user.Email != userChanged.Email)
+            {
+                user.Email = userChanged.Email;
+            }
+            if (user.IsSysAdmin != userChanged.IsSysAdmin)
+            {
+                user.IsSysAdmin = userChanged.IsSysAdmin;
+            }
+            var savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows " + savedRows });
         }
 
         // DELETE: user/delete/5
         [HttpDelete("delete/{id}")]
-        public bool DeleteUser(Guid id)
+        public string DeleteUser(Guid id)
         {
-            var user = db.Users.FirstOrDefault(u => u.Id == id);
-            if (user != null)
+            if (id == null)
             {
-                db.Users.Remove(user);
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
             }
-            return db.SaveChanges() > 0;
+            var user = db.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "User Not found" });
+            }
+            db.Users.Remove(user);
+            var savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows " + savedRows });
         }
     }
 }

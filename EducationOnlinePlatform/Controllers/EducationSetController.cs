@@ -25,27 +25,49 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("{id}")]
         public string EducationSet(Guid id)
         {
+            if (id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
+            if (educationSet == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Education Set Not found" });
+            }
             return System.Text.Json.JsonSerializer.Serialize<EducationSet>(educationSet);
         }
 
         // POST: educationSet/register
         [HttpPost]
         [Route("add")]
-        public bool AddEducationSet([FromBody]EducationSet educationSet)
+        public string AddEducationSet([FromBody]EducationSet educationSet)
         {
-            var educationSets = db.EducationSets;
-            if (educationSets.FirstOrDefault(e => e.Name == educationSet.Name) == null)
+            var savedRows = 0;
+            if (ModelState.IsValid)
             {
-                educationSets.Add(educationSet);
+                var educationSets = db.EducationSets;
+                if (educationSets.FirstOrDefault(e => e.Name == educationSet.Name) == null)
+                {
+                    educationSets.Add(educationSet);
+                }
+                else
+                {
+                    return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Name Not Unique" });
+                }
             }
-            return db.SaveChanges() > 0;
+            savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
         }
 
         // PUT: /educationSet/update/5
         [HttpPut("update/{id}")]
-        public bool UpdateEducationSet(Guid id, [FromBody] EducationSet educationSetChanged)
+        public string UpdateEducationSet(Guid id, [FromBody] EducationSet educationSetChanged)
         {
+            var savedRows = 0;
+            if(id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
             if (educationSet != null)
             {
@@ -54,19 +76,34 @@ namespace EducationOnlinePlatform.Controllers
                     educationSet.Name = educationSetChanged.Name;
                 }
             }
-            return db.SaveChanges() > 0;
+            else
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Education Set Not found" });
+            }
+            savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
         }
 
         // DELETE: educationSet/delete/5
         [HttpDelete("delete/{id}")]
-        public bool DeleteEducationSet(Guid id)
+        public string DeleteEducationSet(Guid id)
         {
+            var savedRows = 0;
+            if(id == null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+            }
             var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
             if (educationSet != null)
             {
                 db.EducationSets.Remove(educationSet);
             }
-            return db.SaveChanges() > 0;
+            else
+            {
+                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Education Set Not found" });
+            }
+            savedRows = db.SaveChanges();
+            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Education Set Not found" });
         }
     }
 }

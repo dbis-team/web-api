@@ -9,7 +9,6 @@ namespace EducationOnlinePlatform
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<UserInEducationSet> UserInEducationSet { get; set; }
@@ -42,10 +41,6 @@ namespace EducationOnlinePlatform
             modelBuilder.Entity<Subject>()
                 .Property(u => u.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
-            //Role Fluent Api
-            modelBuilder.Entity<Role>()
-                .Property(u => u.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
             //UserInEducationSet Fluent Api
             modelBuilder.Entity<UserInEducationSet>()
                 .Property(u => u.Id)
@@ -58,6 +53,10 @@ namespace EducationOnlinePlatform
                 .HasOne(uinc => uinc.User)
                 .WithMany(u => u.UserInEducationSet)
                 .HasForeignKey(uinc => uinc.UserId);
+            modelBuilder.Entity<UserInEducationSet>()
+                .Property(uinc => uinc.UserRole)
+                .HasConversion<string>();
+
             base.OnModelCreating(modelBuilder);
         }
     }

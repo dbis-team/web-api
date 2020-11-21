@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace EducationOnlinePlatform.Models
 {
-    public enum Role
+    public class Result
     {
-        Admin,
-        Teacher,
-        Student
+       public bool success { get; set; }
+       public string description { get; set; }
     }
 }
