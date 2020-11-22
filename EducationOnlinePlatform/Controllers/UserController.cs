@@ -13,6 +13,8 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using EducationOnlinePlatform.ViewModels;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -55,6 +57,8 @@ namespace EducationOnlinePlatform.Controllers
                 if (users.FirstOrDefault(u => u.Email == user.Email) == null)
                 {
                     users.Add(user);
+
+                    user.Password = HeshMD5(user.Password);
                     return new Result { Status = HttpStatusCode.OK, Message = "Saved Rows " + db.SaveChanges() }.ToString();
                 }
                 else
@@ -141,7 +145,7 @@ namespace EducationOnlinePlatform.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                username = identity.Name
+                email = identity.Name
             };
 
             return JsonConvert.SerializeObject(response);
@@ -149,7 +153,7 @@ namespace EducationOnlinePlatform.Controllers
 
         private ClaimsIdentity GetIdentity(string email, string password)
         {
-            var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+            var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == HeshMD5(password));
             string role = "User";
             if (user != null)
             {
@@ -170,6 +174,19 @@ namespace EducationOnlinePlatform.Controllers
 
             return null;
 
+        }
+
+        private string HeshMD5(string password)
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(password);
+            MD5CryptoServiceProvider CSP = new MD5CryptoServiceProvider();
+            byte[] byteHash = CSP.ComputeHash(bytes);
+            string hash = string.Empty;
+
+            foreach (byte b in byteHash)
+                hash += string.Format("{0:x2}", b);
+
+            return hash;
         }
     }
 }
