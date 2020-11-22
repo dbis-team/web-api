@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EducationOnlinePlatform.Models
+﻿namespace EducationOnlinePlatform.Models
 {
     public enum Role
     {

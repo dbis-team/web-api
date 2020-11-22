@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mgPd4iIKe8O/leBS5FBNf2CR9Ty6i9qxkR75Uq5TtD8gbWrVqmArLXjTiTZAw3cwmiYlNFKOLVJLZfCjcPumeQ==",
+  "dgSpecHash": "srLmcUCZfe6XKVrDQu6GiOmRDqqBxG+tOtMgPAsC86kHEsrU65uToXN1ALybw9vBWYK9CoZhuvi2+E74InixNQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Олег\\source\\repos\\web-api\\EducationOnlinePlatform\\EducationOnlinePlatform.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Олег\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.10\\microsoft.aspnetcore.authentication.jwtbearer.3.1.10.nupkg.sha512",
     "C:\\Users\\Олег\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Олег\\.nuget\\packages\\microsoft.aspnetcore.razor\\2.2.0\\microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
     "C:\\Users\\Олег\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\3.1.0\\microsoft.aspnetcore.razor.language.3.1.0.nupkg.sha512",

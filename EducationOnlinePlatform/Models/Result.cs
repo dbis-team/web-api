@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System.Net;
 
 namespace EducationOnlinePlatform.Models
 {
     public class Result
     {
-       public bool success { get; set; }
-       public string description { get; set; }
+       public HttpStatusCode Status { get; set; }
+       public string Message { get; set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

@@ -1,6 +1,8 @@
 using EducationOnlinePlatform.Options;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using EducationOnlinePlatform.Models;
 
 namespace EducationOnlinePlatform
 {
@@ -32,8 +37,31 @@ namespace EducationOnlinePlatform
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Title of API", Version = "v1" });
-            }
-            );
+            });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                                    // укзывает, будет ли валидироваться издатель при валидации токена
+                                    ValidateIssuer = true,
+                                    // строка, представляющая издателя
+                                    ValidIssuer = AuthOptions.ISSUER,
+
+                                    // будет ли валидироваться потребитель токена
+                                    ValidateAudience = true,
+                                    // установка потребителя токена
+                                    ValidAudience = AuthOptions.AUDIENCE,
+                                    // будет ли валидироваться время существования
+                                    ValidateLifetime = true,
+
+                                    // установка ключа безопасности
+                                    IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                                    // валидация ключа безопасности
+                                    ValidateIssuerSigningKey = true,
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +71,21 @@ namespace EducationOnlinePlatform
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //app.ConfigureExceptionHandler();
+            app.UseExceptionHandler(appError =>
+            {
+                appError.Run(async context =>
+                {
+                    context.Response.ContentType = "application/json";
+
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
+                    {
+                        await context.Response.WriteAsync(context.Response.StatusCode + " Internal Server Error.");
+                    }
+                });
+            });
 
             app.UseCors(builder => builder.AllowAnyOrigin());
 

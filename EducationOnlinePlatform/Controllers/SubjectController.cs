@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EducationOnlinePlatform.Models;
+using System.Net;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -13,7 +14,7 @@ namespace EducationOnlinePlatform.Controllers
     [Route("[controller]")]
     public class SubjectContoller : ControllerBase
     {
-        private ApplicationContext db = new ApplicationContext();
+        private readonly ApplicationContext db = new ApplicationContext();
 
         [HttpGet]
         public string Subjects()
@@ -27,12 +28,12 @@ namespace EducationOnlinePlatform.Controllers
         {
             if (id == null)
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
             }
             var subject = db.Subjects.FirstOrDefault(e => e.Id == id);
             if(subject == null)
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
             }
             return System.Text.Json.JsonSerializer.Serialize<Subject>(subject);
         }
@@ -42,14 +43,16 @@ namespace EducationOnlinePlatform.Controllers
         [Route("add")]
         public string AddSubject([FromBody][Bind("Name,EducationSetId")] Subject subject)
         {
-            var savedRows = 0;
             if (ModelState.IsValid)
             {
                 var subjects = db.Subjects;
                 subjects.Add(subject);
-                savedRows = db.SaveChanges();
+                return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
             }
-            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
+            else
+            {
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Not correct Json model" }).ToString();
+            }
         }
 
         // PUT: subject/update/5
@@ -58,7 +61,7 @@ namespace EducationOnlinePlatform.Controllers
         {
             if (id == null)
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
             }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
@@ -67,12 +70,11 @@ namespace EducationOnlinePlatform.Controllers
                 {
                     subject.Name = subjectChanged.Name;
                 }
-                var savedRows = db.SaveChanges();
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
+                return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows" + db.SaveChanges() }).ToString();
             }
             else
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+                return(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
             }
         }
 
@@ -82,7 +84,7 @@ namespace EducationOnlinePlatform.Controllers
         {
             if (id == null)
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Id Not found" });
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
             }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
@@ -91,10 +93,9 @@ namespace EducationOnlinePlatform.Controllers
             }
             else
             {
-                return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = false, description = "Subject Not found" });
+                return (new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
             }
-            var savedRows = db.SaveChanges();
-            return System.Text.Json.JsonSerializer.Serialize<Result>(new Result { success = savedRows > 0, description = "Saved rows" + savedRows });
+            return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
         }
     }
 }

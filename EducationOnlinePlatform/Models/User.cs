@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EducationOnlinePlatform.Models
 {
@@ -13,8 +13,11 @@ namespace EducationOnlinePlatform.Models
         [Required]
         public string UserName { get; set; }
         [Required]
+        [DataType(DataType.Password)]
+        [JsonIgnore]
         public string Password { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         public bool IsSysAdmin { get; set; }
