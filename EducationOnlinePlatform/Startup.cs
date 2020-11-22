@@ -37,7 +37,8 @@ namespace EducationOnlinePlatform
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
-                       .AllowAnyHeader();
+                       .AllowAnyHeader()
+                       .AllowCredentials();
             }));
             services.AddSwaggerGen(x =>
             {
