@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EducationOnlinePlatform.Models;
 using System.Net;
+using Microsoft.AspNetCore.Cors;
 
 namespace EducationOnlinePlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("PolicyApi")]
     public class SubjectContoller : ControllerBase
     {
         private readonly ApplicationContext db = new ApplicationContext();

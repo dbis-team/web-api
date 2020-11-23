@@ -15,11 +15,13 @@ using System.Text.Json.Serialization;
 using EducationOnlinePlatform.ViewModels;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cors;
 
 namespace EducationOnlinePlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("PolicyApi")]
     public class UserController : ControllerBase
     {
         private readonly ApplicationContext db = new ApplicationContext();
