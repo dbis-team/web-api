@@ -32,18 +32,17 @@ namespace EducationOnlinePlatform
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*services.AddCors(o => o.AddPolicy("PolicyApi", builder =>
+            services.AddCors(o => o.AddPolicy("CorsApi", builder =>
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials();
-            }));*/
+                       .AllowAnyHeader();
+            }));
             /*services.AddCors(options =>
             {
                 options.AddPolicy("PolicyApi", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });*/
-            services.AddCors();
+           // services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(x =>
             {
@@ -55,21 +54,21 @@ namespace EducationOnlinePlatform
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                                    // укзывает, будет ли валидироваться издатель при валидации токена
+                                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidateIssuer = true,
-                                    // строка, представляющая издателя
+                                    // пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidIssuer = AuthOptions.ISSUER,
 
-                                    // будет ли валидироваться потребитель токена
+                                    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidateAudience = true,
-                                    // установка потребителя токена
+                                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidAudience = AuthOptions.AUDIENCE,
-                                    // будет ли валидироваться время существования
+                                    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidateLifetime = true,
 
-                                    // установка ключа безопасности
+                                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                                    // валидация ключа безопасности
+                                    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                                     ValidateIssuerSigningKey = true,
                     };
                 });
@@ -83,13 +82,6 @@ namespace EducationOnlinePlatform
             /*app.UseCors(
                 options => options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin()
             );*/
-            app.UseCors(builder =>
-            {
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -109,6 +101,16 @@ namespace EducationOnlinePlatform
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            /*app.UseCors(builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });*/
+
+            app.UseCors("CorsApi");
 
             app.UseAuthorization();
 

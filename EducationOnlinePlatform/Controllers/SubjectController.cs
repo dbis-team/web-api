@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace EducationOnlinePlatform.Controllers
 {
+    [EnableCors("CorsApi")]
     [ApiController]
     [Route("[controller]")]
     public class SubjectContoller : ControllerBase
