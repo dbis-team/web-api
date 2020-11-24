@@ -13,7 +13,6 @@ namespace EducationOnlinePlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [EnableCors("PolicyApi")]
     public class SubjectContoller : ControllerBase
     {
         private readonly ApplicationContext db = new ApplicationContext();

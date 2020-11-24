@@ -39,11 +39,11 @@ namespace EducationOnlinePlatform
                        .AllowAnyHeader()
                        .AllowCredentials();
             }));*/
-            services.AddCors(options =>
+            /*services.AddCors(options =>
             {
                 options.AddPolicy("PolicyApi", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            });
-            //services.AddCors();
+            });*/
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(x =>
             {
@@ -78,11 +78,18 @@ namespace EducationOnlinePlatform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors();
+            // app.UseCors();
             //app.UseCors("PolicyApi", builder => builder.AllowAnyOrigin());
             /*app.UseCors(
                 options => options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin()
             );*/
+            app.UseCors(builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
