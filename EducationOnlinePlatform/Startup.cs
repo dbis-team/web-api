@@ -38,12 +38,7 @@ namespace EducationOnlinePlatform
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
-            /*services.AddCors(options =>
-            {
-                options.AddPolicy("PolicyApi", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            });*/
-            // services.AddCors();
-            services.AddMvc();
+            services.AddMvc(); //Must be deleted?
             services.AddControllers();
             services.AddSwaggerGen(x =>
             {
@@ -66,7 +61,6 @@ namespace EducationOnlinePlatform
                                     ValidateIssuerSigningKey = true,
                     };
                 });
-            services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,23 +91,7 @@ namespace EducationOnlinePlatform
 
             app.UseRouting();
 
-            /*app.UseCors(builder =>
-            {
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });*/
-
             app.UseCors("CorsApi");
-
-            //app.UseMvc();
-
-            app.Use((context, next) =>
-            {
-                context.Items["__CorsMiddlewareInvoked"] = true;
-                return next();
-            });
 
             app.UseAuthorization();
 
