@@ -42,7 +42,8 @@ namespace EducationOnlinePlatform
             {
                 options.AddPolicy("PolicyApi", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });*/
-           // services.AddCors();
+            // services.AddCors();
+            services.AddMvc();
             services.AddControllers();
             services.AddSwaggerGen(x =>
             {
@@ -54,24 +55,18 @@ namespace EducationOnlinePlatform
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                                    // ��������, ����� �� �������������� �������� ��� ��������� ������
                                     ValidateIssuer = true,
-                                    // ������, �������������� ��������
                                     ValidIssuer = AuthOptions.ISSUER,
 
-                                    // ����� �� �������������� ����������� ������
                                     ValidateAudience = true,
-                                    // ��������� ����������� ������
                                     ValidAudience = AuthOptions.AUDIENCE,
-                                    // ����� �� �������������� ����� �������������
                                     ValidateLifetime = true,
 
-                                    // ��������� ����� ������������
                                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                                    // ��������� ����� ������������
                                     ValidateIssuerSigningKey = true,
                     };
                 });
+            services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +106,14 @@ namespace EducationOnlinePlatform
             });*/
 
             app.UseCors("CorsApi");
+
+            //app.UseMvc();
+
+            app.Use((context, next) =>
+            {
+                context.Items["__CorsMiddlewareInvoked"] = true;
+                return next();
+            });
 
             app.UseAuthorization();
 
