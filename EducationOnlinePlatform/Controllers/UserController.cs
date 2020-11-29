@@ -34,24 +34,24 @@ namespace EducationOnlinePlatform.Controllers
 
         // GET: User/5
         [HttpGet("{id}")]
-        public string GetUser(Guid? id)
+        public IActionResult GetUser(Guid? id)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound((new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString());
             }
             var user = db.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString();
+                return NotFound((new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString());
             }
-            return System.Text.Json.JsonSerializer.Serialize<User>(user);
+            return Ok(System.Text.Json.JsonSerializer.Serialize<User>(user));
         }
 
         // POST: User/register
         [HttpPost]
         [Route("register")]
-        public string RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User user)
+        public IActionResult RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -61,32 +61,32 @@ namespace EducationOnlinePlatform.Controllers
                     users.Add(user);
 
                     user.Password = HeshMD5(user.Password);
-                    return new Result { Status = HttpStatusCode.OK, Message = "Saved Rows " + db.SaveChanges() }.ToString();
+                    return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved Rows " + db.SaveChanges() }.ToString());
                 }
                 else
                 {
-                    return new Result { Status = HttpStatusCode.NotFound, Message = "Email is busy" }.ToString();
+                    return Conflict(new Result { Status = HttpStatusCode.Conflict, Message = "Email is busy" }.ToString());
                 }
             }
             else
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Not correct Json model"}).ToString();
+                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Email is busy" }.ToString());
             }
         }
 
         // PUT: /User/update/5
         [HttpPut("update/{id}")]
-        public string UpdateUser(Guid? id, [FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User userChanged)
+        public IActionResult UpdateUser(Guid? id, [FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User userChanged)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
 
             var user = db.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }.ToString());
             }
             if (userChanged.UserName != user.UserName)
             {
@@ -104,24 +104,24 @@ namespace EducationOnlinePlatform.Controllers
             {
                 user.IsSysAdmin = userChanged.IsSysAdmin;
             }
-            return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
         }
 
         // DELETE: user/delete/5
         [HttpDelete("delete/{id}")]
-        public string DeleteUser(Guid? id)
+        public IActionResult DeleteUser(Guid? id)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
             var user = db.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }.ToString());
             }
             db.Users.Remove(user);
-            return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
         }
 
         [HttpPost("login")]

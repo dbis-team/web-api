@@ -17,10 +17,10 @@ namespace EducationOnlinePlatform
 
         public DbSet<EducationSet> EducationSets { get; set; }
 
-        public ApplicationContext()
+        /*public ApplicationContext()
         {
             Database.Migrate();
-        }
+        }*/
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,7 +30,6 @@ namespace EducationOnlinePlatform
             builder.AddJsonFile("appsettings.json");
             var config = builder.Build();
             string connectionString = config.GetConnectionString("devConnection");
-            //optionsBuilder.UseNpgsql("Uid=postgres; Pwd=0000; Host=34.89.220.166; Database=EducationOnlinePlatform");
             optionsBuilder.UseNpgsql(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
