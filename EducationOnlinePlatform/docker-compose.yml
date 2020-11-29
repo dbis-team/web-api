@@ -9,4 +9,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - 80
+      - "8000:80"
+
+  pg:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
