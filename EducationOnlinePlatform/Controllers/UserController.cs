@@ -125,12 +125,12 @@ namespace EducationOnlinePlatform.Controllers
         }
 
         [HttpPost("login")]
-        public string Login([FromBody][Bind("Email, Password")] UserLogin user)
+        public IActionResult Login([FromBody][Bind("Email, Password")] UserLogin user)
         {
             var identity = GetIdentity(user.Email, user.Password);
             if (identity == null)
             {
-                return (new Result { Status = HttpStatusCode.BadRequest, Message = "Incorrect Email or Password" }).ToString();
+                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Incorrect Email or Password" }.ToString());
             }
 
             var now = DateTime.UtcNow;
@@ -150,7 +150,7 @@ namespace EducationOnlinePlatform.Controllers
                 email = identity.Name
             };
 
-            return JsonConvert.SerializeObject(response);
+            return Ok(JsonConvert.SerializeObject(response));
         }
 
         private ClaimsIdentity GetIdentity(string email, string password)
