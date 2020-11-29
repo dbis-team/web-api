@@ -19,51 +19,51 @@ namespace EducationOnlinePlatform.Controllers
         private readonly ApplicationContext db = new ApplicationContext();
 
         [HttpGet]
-        public string Subjects()
+        public IActionResult Subjects()
         {
-            return JsonConvert.SerializeObject(db.Subjects.ToList(), Formatting.Indented);
+            return Ok(JsonConvert.SerializeObject(db.Subjects.ToList(), Formatting.Indented));
         }
 
         // GET: Subject/5
         [HttpGet("{id}")]
-        public string GetSubject(Guid id)
+        public IActionResult GetSubject(Guid id)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
             var subject = db.Subjects.FirstOrDefault(e => e.Id == id);
             if(subject == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }.ToString());
             }
-            return System.Text.Json.JsonSerializer.Serialize<Subject>(subject);
+            return Ok(System.Text.Json.JsonSerializer.Serialize<Subject>(subject));
         }
 
         // POST: subject/add
         [HttpPost]
         [Route("add")]
-        public string AddSubject([FromBody][Bind("Name,EducationSetId")] Subject subject)
+        public IActionResult AddSubject([FromBody][Bind("Name,EducationSetId")] Subject subject)
         {
             if (ModelState.IsValid)
             {
                 var subjects = db.Subjects;
                 subjects.Add(subject);
-                return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
+                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
             }
             else
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Not correct Json model" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Not correct Json model" }.ToString());
             }
         }
 
         // PUT: subject/update/5
         [HttpPut("update/{id}")]
-        public string UpdateSubject(Guid id, [FromBody][Bind("Name,EducationSetId")] Subject subjectChanged)
+        public IActionResult UpdateSubject(Guid id, [FromBody][Bind("Name,EducationSetId")] Subject subjectChanged)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
@@ -72,21 +72,21 @@ namespace EducationOnlinePlatform.Controllers
                 {
                     subject.Name = subjectChanged.Name;
                 }
-                return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows" + db.SaveChanges() }).ToString();
+                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows" + db.SaveChanges() }.ToString());
             }
             else
             {
-                return(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }.ToString());
             }
         }
 
         // DELETE: subject/delete/5
         [HttpDelete("delete/{id}")]
-        public string DeleteSubject(Guid id)
+        public IActionResult DeleteSubject(Guid id)
         {
             if (id == null)
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
@@ -95,9 +95,9 @@ namespace EducationOnlinePlatform.Controllers
             }
             else
             {
-                return (new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }).ToString();
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }.ToString());
             }
-            return (new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }).ToString();
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
         }
     }
 }
