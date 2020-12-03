@@ -16,6 +16,8 @@ using EducationOnlinePlatform.ViewModels;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cors;
+/*using System.Net.Mail;
+using MimeKit;*/
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -51,16 +53,17 @@ namespace EducationOnlinePlatform.Controllers
         // POST: User/register
         [HttpPost]
         [Route("register")]
-        public IActionResult RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User user)
+        public IActionResult RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] RegisterViewModel RegisterUser)
         {
             if (ModelState.IsValid)
             {
                 var users = db.Users;
-                if (users.FirstOrDefault(u => u.Email == user.Email) == null)
+                if (users.FirstOrDefault(u => u.Email == RegisterUser.Email) == null)
                 {
+                    var user = new User { Password = HeshMD5(RegisterUser.Password), Email = RegisterUser.Email, UserName = RegisterUser.Email, IsSysAdmin = RegisterUser.IsSysAdmin};
                     users.Add(user);
 
-                    user.Password = HeshMD5(user.Password);
+                    //EmailCofirm(user);
                     return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved Rows " + db.SaveChanges() }.ToString());
                 }
                 else
@@ -74,9 +77,37 @@ namespace EducationOnlinePlatform.Controllers
             }
         }
 
+        /*private async void EmailCofirm(string email, string subject, string message)
+        {
+            var emailMessage = new MimeMessage();
+
+            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "login@yandex.ru"));
+            emailMessage.To.Add(new MailboxAddress("", email));
+            emailMessage.Subject = subject;
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                Text = message
+            };
+
+            SmtpClient client = new SmtpClient("smtp.yandex.ru", 25);
+            SmtpClient smtp = new SmtpClient("smtp.yandex.ru", 25);
+            // логин и пароль
+            smtp.Credentials = new NetworkCredential("somemail@yandex.ru", "password");
+            //await smtp.Send(emailMessage);
+            using (var client = new SmtpClient())
+            {
+                client.SendMailAsync
+                await client.ConnectAsync("smtp.yandex.ru", 25, false);
+                await client.AuthenticateAsync("login@yandex.ru", "password");
+                await client.SendAsync(emailMessage);
+
+                await client.DisconnectAsync(true);
+            }
+        }*/
+
         // PUT: /User/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateUser(Guid? id, [FromBody][Bind("UserName,Password,Email,IsSysAdmin")] User userChanged)
+        public IActionResult UpdateUser(Guid? id, [FromBody] UpdateUserViewModel userUpdate )
         {
             if (id == null)
             {
@@ -88,21 +119,21 @@ namespace EducationOnlinePlatform.Controllers
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }.ToString());
             }
-            if (userChanged.UserName != user.UserName)
+            if (userUpdate.UserName != user.UserName)
             {
-                user.UserName = userChanged.UserName;
+                user.UserName = userUpdate.UserName;
             }
-            if (userChanged.Password != user.Password)
+            if (userUpdate.Password != user.Password)
             {
-                user.Password = userChanged.Password;
+                user.Password = userUpdate.Password;
             }
-            if (db.Users.Where(u => u.Email == userChanged.Email).ToList().Count() == 0)
+            if (db.Users.Where(u => u.Email == userUpdate.Email).ToList().Count() == 0)
             {
-                user.Email = userChanged.Email;
+                user.Email = userUpdate.Email;
             }
-            if (user.IsSysAdmin != userChanged.IsSysAdmin)
+            if (user.IsSysAdmin != userUpdate.IsSysAdmin)
             {
-                user.IsSysAdmin = userChanged.IsSysAdmin;
+                user.IsSysAdmin = userUpdate.IsSysAdmin;
             }
             return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
         }

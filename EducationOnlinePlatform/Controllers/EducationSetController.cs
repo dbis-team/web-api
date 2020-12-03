@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using EducationOnlinePlatform.Models;
 using System.Net;
 using Microsoft.AspNetCore.Cors;
+using EducationOnlinePlatform.ViewModels;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -40,17 +41,17 @@ namespace EducationOnlinePlatform.Controllers
             return Ok(System.Text.Json.JsonSerializer.Serialize<EducationSet>(educationSet));
         }
 
-        // POST: educationSet/register
+        // POST: educationSet/add
         [HttpPost]
         [Route("add")]
-        public IActionResult AddEducationSet([FromBody][Bind("Name")] EducationSet educationSet)
+        public IActionResult AddEducationSet([FromBody] AddEducationSet educationSetAdd)
         {
             if (ModelState.IsValid)
             {
                 var educationSets = db.EducationSets;
-                if (educationSets.FirstOrDefault(e => e.Name == educationSet.Name) == null)
+                if (educationSets.FirstOrDefault(e => e.Name == educationSetAdd.Name) == null)
                 {
-                    educationSets.Add(educationSet);
+                    educationSets.Add( new EducationSet { Name = educationSetAdd.Name, Description = educationSetAdd.Description });
                 }
                 else
                 {
@@ -66,7 +67,7 @@ namespace EducationOnlinePlatform.Controllers
 
         // PUT: /educationSet/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateEducationSet(Guid id, [FromBody][Bind("Name")] EducationSet educationSetChanged)
+        public IActionResult UpdateEducationSet(Guid id, [FromBody] EducationSetUpdate educationSetUpdate)
         {
             if(id == null)
             {
@@ -75,9 +76,13 @@ namespace EducationOnlinePlatform.Controllers
             var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
             if (educationSet != null)
             {
-                if (educationSet.Name != educationSetChanged.Name)
+                if (educationSet.Name != educationSetUpdate.Name)
                 {
-                    educationSet.Name = educationSetChanged.Name;
+                    educationSet.Name = educationSetUpdate.Name;
+                }
+                if (educationSet.Description != educationSetUpdate.Description)
+                {
+                    educationSet.Description = educationSetUpdate.Description;
                 }
             }
             else

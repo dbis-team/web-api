@@ -17,10 +17,10 @@ namespace EducationOnlinePlatform
 
         public DbSet<EducationSet> EducationSets { get; set; }
 
-        /*public ApplicationContext()
+        public ApplicationContext()
         {
             Database.Migrate();
-        }*/
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

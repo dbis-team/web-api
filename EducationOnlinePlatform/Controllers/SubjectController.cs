@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using EducationOnlinePlatform.Models;
 using System.Net;
 using Microsoft.AspNetCore.Cors;
+using EducationOnlinePlatform.ViewModels;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -43,12 +44,12 @@ namespace EducationOnlinePlatform.Controllers
         // POST: subject/add
         [HttpPost]
         [Route("add")]
-        public IActionResult AddSubject([FromBody][Bind("Name,EducationSetId")] Subject subject)
+        public IActionResult AddSubject([FromBody] AddSubjectViewModel subjectAdd)
         {
             if (ModelState.IsValid)
             {
                 var subjects = db.Subjects;
-                subjects.Add(subject);
+                subjects.Add(new Subject {Name = subjectAdd.Name, EducationSetId = subjectAdd.EducationSetId, Description = subjectAdd.Description });
                 return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
             }
             else
@@ -59,7 +60,7 @@ namespace EducationOnlinePlatform.Controllers
 
         // PUT: subject/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateSubject(Guid id, [FromBody][Bind("Name,EducationSetId")] Subject subjectChanged)
+        public IActionResult UpdateSubject(Guid id, [FromBody] UpdateSubject subjectUpdate)
         {
             if (id == null)
             {
@@ -68,9 +69,13 @@ namespace EducationOnlinePlatform.Controllers
             var subject = db.Subjects.FirstOrDefault(s => s.Id == id);
             if (subject != null)
             {
-                if (subject.Name != subjectChanged.Name)
+                if (subject.Name != subjectUpdate.Name)
                 {
-                    subject.Name = subjectChanged.Name;
+                    subject.Name = subjectUpdate.Name;
+                }
+                if (subject.Description != subjectUpdate.Description)
+                {
+                    subject.Description = subjectUpdate.Description;
                 }
                 return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows" + db.SaveChanges() }.ToString());
             }

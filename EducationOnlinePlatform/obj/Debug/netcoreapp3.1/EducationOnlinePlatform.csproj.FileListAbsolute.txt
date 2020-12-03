@@ -204,3 +204,6 @@ C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcore
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\EducationOnlinePlatform.Views.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\MailKit.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\MimeKit.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
