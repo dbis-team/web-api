@@ -88,6 +88,7 @@ namespace EducationOnlinePlatform
 
             app.UseCors("CorsApi");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -16,6 +16,7 @@ using EducationOnlinePlatform.ViewModels;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 /*using System.Net.Mail;
 using MimeKit;*/
 
@@ -47,7 +48,19 @@ namespace EducationOnlinePlatform.Controllers
             {
                 return NotFound((new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString());
             }
-            return Ok(System.Text.Json.JsonSerializer.Serialize<User>(user));
+            return Ok(System.Text.Json.JsonSerializer.Serialize(user));
+        }
+        // GET: User/me
+        [HttpGet("me")]
+        public IActionResult GetCurrentUser()
+        {
+            var email = User.Identity.Name;
+            if(email == null)
+            {
+                return NotFound();
+            }
+            var user = db.Users.FirstOrDefault(u => u.Email == email);
+            return Ok(System.Text.Json.JsonSerializer.Serialize(user));
         }
 
         // POST: User/register
