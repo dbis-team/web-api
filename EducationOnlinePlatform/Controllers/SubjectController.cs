@@ -104,5 +104,25 @@ namespace EducationOnlinePlatform.Controllers
             }
             return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
         }
+        [HttpGet("EducationSet/{EducationSetId}")]
+        public IActionResult GetSubjectInEducationSet(Guid? EducationSetId)
+        {
+            if (ModelState.IsValid)
+            {
+                var subjects = (from sub in db.Subjects
+                               join educSet in db.EducationSets on sub.EducationSetId equals educSet.Id
+                               where educSet.Id == EducationSetId
+                               select new
+                               {
+                                   Id = sub.Id,
+                                   Name = sub.Name,
+                                   Description = sub.Description,
+                                   EducationSetId = educSet.Id,
+                                   EducationSetName = educSet.Name
+                               }).ToList();
+                return Ok(JsonConvert.SerializeObject(subjects, Formatting.Indented));
+            }
+            return NotFound();
+        }
     }
 }
