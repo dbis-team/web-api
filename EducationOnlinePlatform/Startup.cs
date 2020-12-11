@@ -41,7 +41,10 @@ namespace EducationOnlinePlatform
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
-            services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration.GetConnectionString("devConnection")));
+            services.AddDbContext<ApplicationContext>(
+                options => options.UseNpgsql(Configuration.GetConnectionString("devConnection"),
+                providerOptions => providerOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
+            );
             services.AddIdentity<User, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddDefaultTokenProviders();
