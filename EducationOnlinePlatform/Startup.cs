@@ -61,15 +61,15 @@ namespace EducationOnlinePlatform
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                                    ValidateIssuer = true,
-                                    ValidIssuer = AuthOptions.ISSUER,
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.ISSUER,
 
-                                    ValidateAudience = true,
-                                    ValidAudience = AuthOptions.AUDIENCE,
-                                    ValidateLifetime = true,
+                        ValidateAudience = true,
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidateLifetime = true,
 
-                                    IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                                    ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true,
                     };
                 });
         }
