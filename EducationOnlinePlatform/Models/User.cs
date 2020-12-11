@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,21 +8,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EducationOnlinePlatform.Models
 {
-    public class User
+    public class User: IdentityUser<Guid>
     {
-        [Key]
-        public Guid Id { get; set; }
-        [Required]
-        public string UserName { get; set; }
-        [Required]
-        [DataType(DataType.Password)]
-        [JsonIgnore]
-        public string Password { get; set; }
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
         [DefaultValue(false)]
-        public bool IsSysAdmin { get; set; }
+
+        [JsonIgnore]
+        public override string PasswordHash { get; set; }
+        [JsonIgnore]
+        public override string SecurityStamp { get; set; }
+        [JsonIgnore]
+        public override string ConcurrencyStamp { get; set; }
 
         public List<UserInEducationSet> UserInEducationSet { get; set; }
 

@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using EducationOnlinePlatform.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace EducationOnlinePlatform
 {
@@ -38,6 +41,11 @@ namespace EducationOnlinePlatform
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+            services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration.GetConnectionString("devConnection")));
+            services.AddIdentity<User, ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultTokenProviders();
+
             services.AddMvc(); //Must be deleted?
             services.AddControllers();
             services.AddSwaggerGen(x =>
@@ -64,10 +72,12 @@ namespace EducationOnlinePlatform
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext context)
         {
             if (env.IsDevelopment())
-            {
+            {                
+                context.Database.EnsureDeleted();
+                context.Database.Migrate();
                 app.UseDeveloperExceptionPage();
             }
 

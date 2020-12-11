@@ -17,7 +17,11 @@ namespace EducationOnlinePlatform.Controllers
     [Route("Subject")]
     public class SubjectContoller : ControllerBase
     {
-        private readonly ApplicationContext db = new ApplicationContext();
+        ApplicationContext db;
+        public SubjectContoller(ApplicationContext context)
+        {
+            db = context;
+        }
 
         [HttpGet]
         public IActionResult Subjects()

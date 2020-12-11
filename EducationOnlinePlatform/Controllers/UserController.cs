@@ -17,6 +17,11 @@ using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Mail;
+using MimeKit;
+using Microsoft.AspNetCore.Identity;
+using EducationOnlinePlatform.Services;
+using Microsoft.EntityFrameworkCore;
 /*using System.Net.Mail;
 using MimeKit;*/
 
@@ -27,57 +32,106 @@ namespace EducationOnlinePlatform.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ApplicationContext db = new ApplicationContext();
+        ApplicationContext db;
+
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationContext context)
+        {
+            db = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
 
         [HttpGet]
-        public string GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            return JsonConvert.SerializeObject(db.Users.ToList(), Formatting.Indented);
+            var users = await( from u in db.Users
+                        join ur in db.UserRoles on u.Id equals ur.UserId
+                        join r in db.Roles on ur.RoleId equals r.Id
+                        select new
+                        {
+                            userName = u.UserName,
+                            email = u.Email,
+                            phone = u.PhoneNumber,
+                            roleId = r.Id,
+                            role = r.Name
+                        }).ToListAsync();
+            return Ok(JsonConvert.SerializeObject(users));
         }
 
         // GET: User/5
         [HttpGet("{id}")]
         public IActionResult GetUser(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound((new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }).ToString());
-            }
-            var user = db.Users.FirstOrDefault(u => u.Id == id);
+            var user = (from u in db.Users
+                        join ur in db.UserRoles on u.Id equals ur.UserId
+                        join r in db.Roles on ur.RoleId equals r.Id
+                        where u.Id == id
+                        select new
+                        {
+                            userName = u.UserName,
+                            email = u.Email,
+                            phone = u.PhoneNumber,
+                            roleId = r.Id,
+                            role = r.Name
+                        });
             if (user == null)
             {
-                return NotFound((new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }).ToString());
+                return NotFound();
             }
-            return Ok(System.Text.Json.JsonSerializer.Serialize(user));
+            return Ok(JsonConvert.SerializeObject(user));
         }
         // GET: User/me
         [HttpGet("me")]
         public IActionResult GetCurrentUser()
         {
-            var email = User.Identity.Name;
-            if(email == null)
+            var user = (from u in db.Users
+                               join ur in db.UserRoles on u.Id equals ur.UserId
+                               join r in db.Roles on ur.RoleId equals r.Id
+                               where u.Email == User.Identity.Name
+                               select new
+                               {
+                                   userName = u.UserName,
+                                   email = u.Email,
+                                   phone = u.PhoneNumber,
+                                   roleId = r.Id,
+                                   role = r.Name
+                               });
+            if(user == null)
             {
                 return NotFound();
             }
-            var user = db.Users.FirstOrDefault(u => u.Email == email);
-            return Ok(System.Text.Json.JsonSerializer.Serialize(user));
+            return Ok(JsonConvert.SerializeObject(user));
         }
 
         // POST: User/register
         [HttpPost]
         [Route("register")]
-        public IActionResult RegisterUser([FromBody][Bind("UserName,Password,Email,IsSysAdmin")] RegisterViewModel RegisterUser)
+        public async Task<IActionResult> RegisterUser([FromBody][Bind("UserName,Password,Email")] RegisterViewModel RegisterUser)
         {
             if (ModelState.IsValid)
             {
-                var users = db.Users;
-                if (users.FirstOrDefault(u => u.Email == RegisterUser.Email) == null)
+                if (await _userManager.FindByEmailAsync(RegisterUser.Email) == null)
                 {
-                    var user = new User { Password = HeshMD5(RegisterUser.Password), Email = RegisterUser.Email, UserName = RegisterUser.Email, IsSysAdmin = RegisterUser.IsSysAdmin};
-                    users.Add(user);
-
-                    //EmailCofirm(user);
-                    return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved Rows " + db.SaveChanges() }.ToString());
+                    var user = new User { Email = RegisterUser.Email, UserName = RegisterUser.UserName};
+                    var result = await _userManager.CreateAsync(user, RegisterUser.Password);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddToRoleAsync(user, RegisterUser.Role);
+                        EmailService emailService = new EmailService();
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action(
+                            "ConfirmEmail",
+                            "User",
+                            new { userId = (user.Id).ToString(), code = code },
+                            protocol: HttpContext.Request.Scheme);
+                        await emailService.SendEmailAsync(RegisterUser.Email, "Confirm your account",
+                            $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>{callbackUrl}'</a>");
+                        return Ok(new Result { Status = HttpStatusCode.OK, Message = "Success registration" }.ToString());
+                    }
+                    return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = result.ToString() }.ToString());
                 }
                 else
                 {
@@ -86,153 +140,125 @@ namespace EducationOnlinePlatform.Controllers
             }
             else
             {
-                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Email is busy" }.ToString());
+                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Model is no correct" }.ToString());
             }
         }
 
-        /*private async void EmailCofirm(string email, string subject, string message)
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            var emailMessage = new MimeMessage();
-
-            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "login@yandex.ru"));
-            emailMessage.To.Add(new MailboxAddress("", email));
-            emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            if (userId == null || code == null)
             {
-                Text = message
-            };
-
-            SmtpClient client = new SmtpClient("smtp.yandex.ru", 25);
-            SmtpClient smtp = new SmtpClient("smtp.yandex.ru", 25);
-            // логин и пароль
-            smtp.Credentials = new NetworkCredential("somemail@yandex.ru", "password");
-            //await smtp.Send(emailMessage);
-            using (var client = new SmtpClient())
-            {
-                client.SendMailAsync
-                await client.ConnectAsync("smtp.yandex.ru", 25, false);
-                await client.AuthenticateAsync("login@yandex.ru", "password");
-                await client.SendAsync(emailMessage);
-
-                await client.DisconnectAsync(true);
+                return NotFound("Not found email or code");
             }
-        }*/
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Not found email or code");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+                return Ok("Succes confirm");
+            else
+                return NotFound("Not found email or code");
+        }
 
         // PUT: /User/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateUser(Guid? id, [FromBody] UpdateUserViewModel userUpdate )
+        public async Task<IActionResult> UpdateUser(Guid? id, [FromBody] UpdateUserViewModel userUpdate )
         {
-            if (id == null)
-            {
-                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
-            }
-
-            var user = db.Users.FirstOrDefault(u => u.Id == id);
+            var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }.ToString());
             }
-            if (userUpdate.UserName != user.UserName)
+
+            if (userUpdate.UserName != user.UserName && userUpdate.UserName != null)
             {
                 user.UserName = userUpdate.UserName;
             }
-            if (userUpdate.Password != user.Password)
-            {
-                user.Password = userUpdate.Password;
-            }
-            if (db.Users.Where(u => u.Email == userUpdate.Email).ToList().Count() == 0)
+            if (userUpdate.Email != user.Email && userUpdate.Email != null)
             {
                 user.Email = userUpdate.Email;
             }
-            if (user.IsSysAdmin != userUpdate.IsSysAdmin)
+            if (userUpdate.Password != user.PasswordHash && userUpdate.Password != null)
             {
-                user.IsSysAdmin = userUpdate.IsSysAdmin;
+                var _passwordValidator =
+                     HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
+                var _passwordHasher =
+                     HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
+                var result = await _passwordValidator.ValidateAsync(_userManager, user, userUpdate.Password);
+                if (result.Succeeded)
+                {
+                    user.PasswordHash = _passwordHasher.HashPassword(user, userUpdate.Password);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+
             }
-            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
+            await _userManager.UpdateAsync(user);
+            return Ok("UpdateSuccess");
         }
 
         // DELETE: user/delete/5
         [HttpDelete("delete/{id}")]
-        public IActionResult DeleteUser(Guid? id)
+        public async Task<IActionResult> DeleteUser(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
-            }
-            var user = db.Users.FirstOrDefault(u => u.Id == id);
+            var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User Not found" }.ToString());
             }
-            db.Users.Remove(user);
-            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
+            var result = await _userManager.DeleteAsync(user);
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Success " + result.Succeeded }.ToString());
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody][Bind("Email, Password")] UserLogin user)
+        public async Task<IActionResult>Login([FromBody][Bind("Email, Password, RemeberMe")] UserLogin userlog)
         {
-            var identity = GetIdentity(user.Email, user.Password);
-            if (identity == null)
+            var user = await _userManager.FindByEmailAsync(userlog.Email);
+            var result = await _userManager.CheckPasswordAsync(user, userlog.Password);
+            if (result)
             {
-                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Incorrect Email or Password" }.ToString());
-            }
-
-            var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                email = identity.Name
-            };
-
-            return Ok(JsonConvert.SerializeObject(response));
-        }
-
-        private ClaimsIdentity GetIdentity(string email, string password)
-        {
-            var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == HeshMD5(password));
-            string role = "User";
-            if (user != null)
-            {
-                if (user.IsSysAdmin)
+                if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
-                    role = "SysAdmin";
+                    return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Вы не подтверлдили свой email" }.ToString());
+                }
+                //Must be one role ??
+                var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                if(role == null)
+                {
+                    role = "student";
                 }
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
                 };
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
+                var now = DateTime.UtcNow;
+                // создаем JWT-токен
+                var jwt = new JwtSecurityToken(
+                        issuer: AuthOptions.ISSUER,
+                        audience: AuthOptions.AUDIENCE,
+                        notBefore: now,
+                        claims: claims,
+                        expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                var response = new
+                {
+                    access_token = encodedJwt,
+                    email = user.Email
+                };
+
+                return Ok(JsonConvert.SerializeObject(response));
             }
-
-            return null;
-
-        }
-
-        private string HeshMD5(string password)
-        {
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            MD5CryptoServiceProvider CSP = new MD5CryptoServiceProvider();
-            byte[] byteHash = CSP.ComputeHash(bytes);
-            string hash = string.Empty;
-
-            foreach (byte b in byteHash)
-                hash += string.Format("{0:x2}", b);
-
-            return hash;
+            return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Incorrect Email or Password" }.ToString());
         }
     }
 }

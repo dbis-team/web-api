@@ -17,7 +17,11 @@ namespace EducationOnlinePlatform.Controllers
     [Route("EducationSet")]
     public class EducationSetContoller : ControllerBase
     {
-        private readonly ApplicationContext db = new ApplicationContext();
+        ApplicationContext db;
+        public EducationSetContoller(ApplicationContext context)
+        {
+            db = context;
+        }
 
         [HttpGet]
         public IActionResult EducationSets()

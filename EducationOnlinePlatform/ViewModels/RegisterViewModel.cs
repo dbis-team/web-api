@@ -17,8 +17,7 @@ namespace EducationOnlinePlatform.ViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        [DefaultValue(false)]
-        public bool IsSysAdmin { get; set; }
+        public string Role { get; set; } = "student";
 
     }
 }

@@ -1,37 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using EducationOnlinePlatform.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace EducationOnlinePlatform
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext: IdentityDbContext<User, ApplicationRole, Guid>
     {
-        public DbSet<User> Users { get; set; }
+        public ApplicationContext(DbContextOptions options)
+            : base(options) {}
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<UserInEducationSet> UserInEducationSet { get; set; }
 
         public DbSet<EducationSet> EducationSets { get; set; }
 
-        public ApplicationContext()
-        {
-            Database.Migrate();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var builder = new ConfigurationBuilder();
-            // установка пути к текущему каталогу
-            builder.SetBasePath(Directory.GetCurrentDirectory());
-            builder.AddJsonFile("appsettings.json");
-            var config = builder.Build();
-            string connectionString = config.GetConnectionString("devConnection");
-            optionsBuilder.UseNpgsql(connectionString);
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Addd the Postgres Extension for UUID generation
@@ -70,7 +54,8 @@ namespace EducationOnlinePlatform
                 .Property(uinc => uinc.UserRole)
                 .HasConversion<string>();
 
-            base.OnModelCreating(modelBuilder);
+            //modelBuilder.Ignore<IdentityUserLogin>();
+            //base.OnModelCreating(modelBuilder);
         }
     }
 }

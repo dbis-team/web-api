@@ -207,3 +207,8 @@ C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcore
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\MailKit.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\MimeKit.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
