@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using EducationOnlinePlatform.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,26 @@ namespace EducationOnlinePlatform
                 .HasConversion<string>();
 
             //modelBuilder.Ignore<IdentityUserLogin>();
-            //base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Ignore<IdentityUserToken<Guid>>();
+            modelBuilder.Ignore<IdentityUserLogin<Guid>>();
+            modelBuilder.Ignore<IdentityUserClaim<Guid>>();
+            modelBuilder.Ignore<IdentityRoleClaim<Guid>>();
+            modelBuilder.Entity<User>()
+
+                .Ignore(c => c.AccessFailedCount)
+                .Ignore(c => c.LockoutEnabled)
+                .Ignore(c => c.TwoFactorEnabled)
+                .Ignore(c => c.ConcurrencyStamp)
+                .Ignore(c => c.LockoutEnd)
+                .Ignore(c => c.TwoFactorEnabled)
+                .Ignore(c => c.LockoutEnd)
+                .Ignore(c => c.AccessFailedCount)
+                .Ignore(c => c.PhoneNumberConfirmed)
+                .Ignore(c => c.PhoneNumber);
+
+            //modelBuilder.Entity<IdentityUser>().ToTable("Users");//to change the name of table.
+
         }
     }
 }

@@ -52,6 +52,7 @@ namespace EducationOnlinePlatform.Controllers
                         join r in db.Roles on ur.RoleId equals r.Id
                         select new
                         {
+                            id = u.Id,
                             userName = u.UserName,
                             email = u.Email,
                             phone = u.PhoneNumber,
@@ -93,6 +94,7 @@ namespace EducationOnlinePlatform.Controllers
                                where u.Email == User.Identity.Name
                                select new
                                {
+                                   id = u.Id,
                                    userName = u.UserName,
                                    email = u.Email,
                                    phone = u.PhoneNumber,

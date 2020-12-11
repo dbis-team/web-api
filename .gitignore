@@ -29,3 +29,6 @@
 
 # NuGet Packages
 **/packages/
+
+.env
+.appsettings.json
