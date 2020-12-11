@@ -22,6 +22,8 @@ using MimeKit;
 using Microsoft.AspNetCore.Identity;
 using EducationOnlinePlatform.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 /*using System.Net.Mail;
 using MimeKit;*/
 
@@ -124,11 +126,12 @@ namespace EducationOnlinePlatform.Controllers
                         await _userManager.AddToRoleAsync(user, RegisterUser.Role);
                         EmailService emailService = new EmailService();
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action(
-                            "ConfirmEmail",
-                            "User",
-                            new { userId = (user.Id).ToString(), code = code },
-                            protocol: HttpContext.Request.Scheme);
+                        var builder = new ConfigurationBuilder();
+                        builder.SetBasePath(Directory.GetCurrentDirectory());
+                        builder.AddJsonFile("appsettings.json");
+                        var config = builder.Build();
+                        var utl = config.GetSection("clientAppEmailVerificationLink").Value;
+                        var callbackUrl = $"{utl}?userId={user.Id}&code={code}";
                         await emailService.SendEmailAsync(RegisterUser.Email, "Confirm your account",
                             $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>{callbackUrl}'</a>");
                         return Ok(new Result { Status = HttpStatusCode.OK, Message = "Success registration" }.ToString());
