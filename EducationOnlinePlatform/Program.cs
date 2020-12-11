@@ -17,7 +17,7 @@ namespace EducationOnlinePlatform
     {
         public static/* async*/ void Main(string[] args)
         {
-            /*var host = */CreateHostBuilder(args).Build().Run;
+            /*var host = */CreateHostBuilder(args).Build().Run();
 
             /*using (var scope = host.Services.CreateScope())
             {
