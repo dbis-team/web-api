@@ -77,13 +77,10 @@ namespace EducationOnlinePlatform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env/*, ApplicationContext context*/)
         {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
-                context.Database.Migrate();
-            }
             if (env.IsDevelopment())
             {                
+                /*context.Database.EnsureDeleted();
+                context.Database.Migrate();*/
                 app.UseDeveloperExceptionPage();
             }
 
