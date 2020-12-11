@@ -2,7 +2,6 @@ using EducationOnlinePlatform.Data;
 using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,12 +17,8 @@ namespace EducationOnlinePlatform
     {
         public static/* async*/ void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            host.Run();
-            using (var context = (ApplicationContext)host.Services.GetService(typeof(ApplicationContext)))
-            {
-                context.Database.Migrate();
-            }
+            /*var host = */CreateHostBuilder(args).Build().Run();
+
             /*using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
