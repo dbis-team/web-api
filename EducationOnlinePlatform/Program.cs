@@ -15,9 +15,9 @@ namespace EducationOnlinePlatform
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static/* async*/ void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            /*var host = */CreateHostBuilder(args).Build().Run();
 
             /*using (var scope = host.Services.CreateScope())
             {
@@ -33,7 +33,7 @@ namespace EducationOnlinePlatform
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }*/
-            host.Run();
+            //host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
