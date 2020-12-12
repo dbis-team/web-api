@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EducationOnlinePlatform.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,6 @@ namespace EducationOnlinePlatform.ViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        public string Role { get; set; } = "student";
-
+        public Role Role { get; set; } = Role.Student;
     }
 }

@@ -5,13 +5,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace EducationOnlinePlatform
 {
-    public class ApplicationContext: IdentityDbContext<User, ApplicationRole, Guid>
+    public class ApplicationContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public ApplicationContext(DbContextOptions options)
-            : base(options) {}
+            : base(options) {
+        }
+        public DbSet<SubjectFile> Files { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<UserInEducationSet> UserInEducationSet { get; set; }
 
@@ -19,6 +22,7 @@ namespace EducationOnlinePlatform
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresEnum<Role>();
             // Addd the Postgres Extension for UUID generation
             modelBuilder.HasPostgresExtension("uuid-ossp");
             //User Fluent Api
@@ -55,12 +59,13 @@ namespace EducationOnlinePlatform
                 .Property(uinc => uinc.UserRole)
                 .HasConversion<string>();
 
-            //modelBuilder.Ignore<IdentityUserLogin>();
             base.OnModelCreating(modelBuilder);
             modelBuilder.Ignore<IdentityUserToken<Guid>>();
             modelBuilder.Ignore<IdentityUserLogin<Guid>>();
             modelBuilder.Ignore<IdentityUserClaim<Guid>>();
             modelBuilder.Ignore<IdentityRoleClaim<Guid>>();
+            modelBuilder.Ignore<IdentityRole<Guid>>();
+            modelBuilder.Ignore<IdentityUserRole<Guid>>();
             modelBuilder.Entity<User>()
 
                 .Ignore(c => c.AccessFailedCount)
@@ -73,7 +78,7 @@ namespace EducationOnlinePlatform
                 .Ignore(c => c.AccessFailedCount)
                 .Ignore(c => c.PhoneNumberConfirmed)
                 .Ignore(c => c.PhoneNumber);
-
+            //modelBuilder.ForNpgsqlHasEnum("Role", Enum.GetNames(typeof(Role)));
             //modelBuilder.Entity<IdentityUser>().ToTable("Users");//to change the name of table.
 
         }
