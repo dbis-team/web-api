@@ -46,16 +46,16 @@ namespace EducationOnlinePlatform.Controllers
 
         // GET: ScheduleEvents/Details/5
         [HttpGet("EducationSet/{EducationSetId}")]
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid? EducationSetId)
         {
-            if (id == null)
+            if (EducationSetId == null)
             {
                 return NotFound();
             }
 
             var scheduleEvent = await _context.ScheduleEvents
                 .Include(s => s.EducationSet)
-                .FirstOrDefaultAsync(m => m.EducationSetId == id);
+                .FirstOrDefaultAsync(m => m.EducationSetId == EducationSetId);
             if (scheduleEvent == null)
             {
                 return NotFound();
@@ -112,7 +112,7 @@ namespace EducationOnlinePlatform.Controllers
                     scheduleEvent.EducationSetId = scheduleEventUpdate.EducationSetId;
                 }
                 _context.Update(scheduleEvent);
-                    await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
                 return Ok("Success Update");
             }
             return BadRequest("Bad Request");
@@ -133,6 +133,7 @@ namespace EducationOnlinePlatform.Controllers
                 return NotFound();
             }
             _context.Remove(scheduleEvent);
+            await _context.SaveChangesAsync();
 
             return Ok("Succsess Remove");
         }
