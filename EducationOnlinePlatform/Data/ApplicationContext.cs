@@ -25,6 +25,8 @@ namespace EducationOnlinePlatform
             modelBuilder.HasPostgresEnum<Role>();
             // Addd the Postgres Extension for UUID generation
             modelBuilder.HasPostgresExtension("uuid-ossp");
+            modelBuilder.Entity<SubjectFile>()
+                .HasKey(s => new { s.Id, s.SubjectId });
             //User Fluent Api
             modelBuilder.Entity<User>()
                 .Property(u => u.Id)

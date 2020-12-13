@@ -8,7 +8,8 @@ namespace EducationOnlinePlatform.Models
 {
     public class SubjectFile
     {
-        [Key]
-        public Guid Id { get; set; }
+        public Guid Id {get; set;}
+        public Guid SubjectId { get; set; }
+        public Subject Subject { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EducationOnlinePlatform.Models
@@ -13,5 +14,6 @@ namespace EducationOnlinePlatform.Models
         public Guid EducationSetId { get; set; }
         public string Description { get; set; }
         public EducationSet EducationSet { get; set; }
+        public List<SubjectFile> File { get; set; } = new List<SubjectFile>();
     }
 }

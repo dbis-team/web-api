@@ -212,17 +212,3 @@ C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcore
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\bin\Debug\netcoreapp3.1\EducationOnlinePlatform.Views.pdb
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.RazorAssemblyInfo.cache
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.RazorAssemblyInfo.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.TagHelpers.input.cache
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.TagHelpers.output.cache
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.RazorCoreGenerate.cache
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\SubjectFiles\Create.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\SubjectFiles\Delete.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\SubjectFiles\Details.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\SubjectFiles\Edit.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\Razor\Views\SubjectFiles\Index.cshtml.g.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.RazorTargetAssemblyInfo.cs
-C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform\obj\Debug\netcoreapp3.1\EducationOnlinePlatform.Views.pdb

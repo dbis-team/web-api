@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EducationOnlinePlatform;
 using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Cors;
+using EducationOnlinePlatform.ViewModels;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -30,7 +31,7 @@ namespace EducationOnlinePlatform.Controllers
             return Ok(await _context.Files.ToListAsync());
         }
 
-        // GET: SubjectFiles/Details/5
+        // GET: SubjectFiles/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -53,11 +54,11 @@ namespace EducationOnlinePlatform.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromBody] SubjectFile subjectFile)
+        public async Task<IActionResult> Create([FromBody] FileViewModel subjectFile)
         {
             if (ModelState.IsValid)
             {
-                SubjectFile file = new SubjectFile { Id = (Guid)subjectFile.Id };
+                SubjectFile file = new SubjectFile { Id = subjectFile.FileId, SubjectId = subjectFile.SubjectId };
                 _context.Add(file);
                 await _context.SaveChangesAsync();
                 return Ok(file);
