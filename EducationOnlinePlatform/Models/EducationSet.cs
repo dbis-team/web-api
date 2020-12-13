@@ -1,3 +1,4 @@
+using EducationOnlinePlatform.Controllers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace EducationOnlinePlatform.Models
 
         public string Description { get; set; }
         public List<Subject> Subjects { get; set; }
+        public List<ScheduleEvent> Events { get; set; }
         public List<UserInEducationSet> UserInEducationSet { get; set; }
 
         public EducationSet()

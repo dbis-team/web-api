@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using EducationOnlinePlatform.Controllers;
 
 namespace EducationOnlinePlatform
 {
@@ -20,11 +21,16 @@ namespace EducationOnlinePlatform
 
         public DbSet<EducationSet> EducationSets { get; set; }
 
+        public DbSet<ScheduleEvent> ScheduleEvents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasPostgresEnum<Role>();
             // Addd the Postgres Extension for UUID generation
             modelBuilder.HasPostgresExtension("uuid-ossp");
+            modelBuilder.Entity<ScheduleEvent>()
+            .Property(u => u.Id)
+            .HasDefaultValueSql("uuid_generate_v4()");
             modelBuilder.Entity<SubjectFile>()
                 .HasKey(s => new { s.Id, s.SubjectId });
             //User Fluent Api
