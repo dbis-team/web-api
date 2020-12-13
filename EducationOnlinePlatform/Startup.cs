@@ -20,6 +20,7 @@ using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Npgsql;
 
 namespace EducationOnlinePlatform
 {
@@ -41,11 +42,12 @@ namespace EducationOnlinePlatform
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<Role>("role");
             services.AddDbContext<ApplicationContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("devConnection"),
                 providerOptions => providerOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
             );
-            services.AddIdentity<User, ApplicationRole>()
+            services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddDefaultTokenProviders();
 
@@ -55,6 +57,7 @@ namespace EducationOnlinePlatform
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Title of API", Version = "v1" });
             });
+            //services.AddIdentity();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -78,8 +81,12 @@ namespace EducationOnlinePlatform
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext context)
         {
             if (env.IsDevelopment())
-            {                
+            {
+                context.Database.EnsureDeleted();
                 context.Database.Migrate();
+                NpgsqlConnection npgsqlConnection = ((NpgsqlConnection)context.Database.GetDbConnection());
+                npgsqlConnection.Open();
+                npgsqlConnection.ReloadTypes();
                 app.UseDeveloperExceptionPage();
             }
 

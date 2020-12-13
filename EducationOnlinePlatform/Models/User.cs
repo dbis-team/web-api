@@ -18,7 +18,7 @@ namespace EducationOnlinePlatform.Models
         public override string SecurityStamp { get; set; }
         [JsonIgnore]
         public override string ConcurrencyStamp { get; set; }
-
+        public Role Role { get; set; } = Role.Student;
         public List<UserInEducationSet> UserInEducationSet { get; set; }
 
         public User() 

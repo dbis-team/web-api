@@ -1,4 +1,3 @@
-using EducationOnlinePlatform.Data;
 using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
