@@ -4,15 +4,17 @@ using EducationOnlinePlatform;
 using EducationOnlinePlatform.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace EducationOnlinePlatform.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201213131235_Add_Column_SubjectFile_Subject")]
+    partial class Add_Column_SubjectFile_Subject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,33 +23,6 @@ namespace EducationOnlinePlatform.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            modelBuilder.Entity("EducationOnlinePlatform.Controllers.ScheduleEvent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("EducationSetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EducationSetId");
-
-                    b.ToTable("ScheduleEvents");
-                });
 
             modelBuilder.Entity("EducationOnlinePlatform.Models.EducationSet", b =>
                 {
@@ -184,15 +159,6 @@ namespace EducationOnlinePlatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserInEducationSet");
-                });
-
-            modelBuilder.Entity("EducationOnlinePlatform.Controllers.ScheduleEvent", b =>
-                {
-                    b.HasOne("EducationOnlinePlatform.Models.EducationSet", "EducationSet")
-                        .WithMany("Events")
-                        .HasForeignKey("EducationSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("EducationOnlinePlatform.Models.Subject", b =>
