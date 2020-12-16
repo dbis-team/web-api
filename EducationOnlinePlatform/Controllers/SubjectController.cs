@@ -48,13 +48,20 @@ namespace EducationOnlinePlatform.Controllers
         // POST: subject/add
         [HttpPost]
         [Route("add")]
-        public IActionResult AddSubject([FromBody] AddSubjectViewModel subjectAdd)
+        public async Task<IActionResult> AddSubject([FromBody] AddSubjectViewModel subjectAdd)
         {
             if (ModelState.IsValid)
             {
                 var subjects = db.Subjects;
-                subjects.Add(new Subject {Name = subjectAdd.Name, EducationSetId = subjectAdd.EducationSetId, Description = subjectAdd.Description });
-                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
+                var subject = new Subject
+                {
+                    Name = subjectAdd.Name,
+                    EducationSetId = subjectAdd.EducationSetId,
+                    Description = subjectAdd.Description
+                };
+                subjects.Add(subject);
+                await db.SaveChangesAsync();
+                return Ok(JsonConvert.SerializeObject(subject, Formatting.Indented));
             }
             else
             {
@@ -64,7 +71,7 @@ namespace EducationOnlinePlatform.Controllers
 
         // PUT: subject/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateSubject(Guid id, [FromBody] UpdateSubject subjectUpdate)
+        public async Task<IActionResult> UpdateSubject(Guid id, [FromBody] UpdateSubject subjectUpdate)
         {
             if (id == null)
             {
@@ -81,7 +88,8 @@ namespace EducationOnlinePlatform.Controllers
                 {
                     subject.Description = subjectUpdate.Description;
                 }
-                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows" + db.SaveChanges() }.ToString());
+                await db.SaveChangesAsync();
+                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Subject was Updated" }.ToString());
             }
             else
             {
@@ -91,7 +99,7 @@ namespace EducationOnlinePlatform.Controllers
 
         // DELETE: subject/delete/5
         [HttpDelete("delete/{id}")]
-        public IActionResult DeleteSubject(Guid id)
+        public async Task<IActionResult> DeleteSubject(Guid id)
         {
             if (id == null)
             {
@@ -106,7 +114,8 @@ namespace EducationOnlinePlatform.Controllers
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }.ToString());
             }
-            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved rows " + db.SaveChanges() }.ToString());
+            await db.SaveChangesAsync();
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved was deleted" }.ToString());
         }
         [HttpGet("EducationSet/{EducationSetId}")]
         public IActionResult GetSubjectInEducationSet(Guid? EducationSetId)

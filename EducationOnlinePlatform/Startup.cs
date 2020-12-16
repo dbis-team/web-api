@@ -82,7 +82,6 @@ namespace EducationOnlinePlatform
         {
             if (env.IsDevelopment())
             {
-                context.Database.EnsureDeleted();
                 context.Database.Migrate();
                 NpgsqlConnection npgsqlConnection = ((NpgsqlConnection)context.Database.GetDbConnection());
                 npgsqlConnection.Open();
