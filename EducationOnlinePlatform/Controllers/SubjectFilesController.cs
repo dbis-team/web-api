@@ -50,20 +50,17 @@ namespace EducationOnlinePlatform.Controllers
             return Ok(subjectFile);
         }
         // POST: SubjectFiles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Create")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromBody] FileViewModel subjectFile)
+        public async Task<IActionResult> Create([FromBody] SubjectFileViewModel subjectFile)
         {
             if (ModelState.IsValid)
             {
-                SubjectFile file = new SubjectFile { Id = subjectFile.FileId, SubjectId = subjectFile.SubjectId };
+                SubjectFile file = new SubjectFile { Id = subjectFile.Id, SubjectId = subjectFile.SubjectId };
                 _context.Add(file);
                 await _context.SaveChangesAsync();
                 return Ok(file);
             }
-            return BadRequest("Не удалось выполнить инсерт");
+            return BadRequest("Не удалось выполнить запрос");
         }
 
         // GET: SubjectFiles/Delete/5
