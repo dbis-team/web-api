@@ -110,7 +110,7 @@ namespace EducationOnlinePlatform.Controllers
                         var utl = config.GetSection("clientAppEmailVerificationLink").Value;
                         var callbackUrl = $"{utl}?userId={user.Id}&code={code}";
                         await emailService.SendEmailAsync(RegisterUser.Email, "Confirm your account",
-                            $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>{callbackUrl}'</a>");
+                            $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>{callbackUrl}</a>");
                         return Ok(new Result { Status = HttpStatusCode.OK, Message = "Success registration" }.ToString());
                     }
                     return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = result.ToString() }.ToString());
