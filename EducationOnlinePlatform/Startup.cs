@@ -95,7 +95,6 @@ namespace EducationOnlinePlatform
             app.Run(async (context) =>
             {
                 logger.LogInformation("Processing request {0}", context.Request.Path);
-                await context.Response.WriteAsync("Hello World!");
             });
 
             /*var swaggerOptions = new SwaggerOptions();
