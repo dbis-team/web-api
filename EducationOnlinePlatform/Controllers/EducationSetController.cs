@@ -9,6 +9,7 @@ using EducationOnlinePlatform.Models;
 using System.Net;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -18,14 +19,19 @@ namespace EducationOnlinePlatform.Controllers
     public class EducationSetContoller : ControllerBase
     {
         ApplicationContext db;
-        public EducationSetContoller(ApplicationContext context)
+
+        private readonly ILogger _logger;
+
+        public EducationSetContoller(ApplicationContext context, ILogger<EducationSetContoller> logger)
         {
             db = context;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult EducationSets()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             return Ok(JsonConvert.SerializeObject(db.EducationSets.ToList(), Formatting.Indented));
         }
 
@@ -33,6 +39,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("{id}")]
         public IActionResult EducationSet(Guid id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
@@ -50,6 +57,7 @@ namespace EducationOnlinePlatform.Controllers
         [Route("add")]
         public IActionResult AddEducationSet([FromBody] AddEducationSet educationSetAdd)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 var educationSets = db.EducationSets;
@@ -73,7 +81,8 @@ namespace EducationOnlinePlatform.Controllers
         [HttpPut("update/{id}")]
         public IActionResult UpdateEducationSet(Guid id, [FromBody] EducationSetUpdate educationSetUpdate)
         {
-            if(id == null)
+            _logger.LogInformation("Processing request {0}", Request.Path);
+            if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
@@ -100,7 +109,8 @@ namespace EducationOnlinePlatform.Controllers
         [HttpDelete("delete/{id}")]
         public IActionResult DeleteEducationSet(Guid id)
         {
-            if(id == null)
+            _logger.LogInformation("Processing request {0}", Request.Path);
+            if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }

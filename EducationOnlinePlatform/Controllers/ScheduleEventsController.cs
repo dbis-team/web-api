@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EducationOnlinePlatform;
 using EducationOnlinePlatform.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -14,20 +15,25 @@ namespace EducationOnlinePlatform.Controllers
     {
         private readonly ApplicationContext _context;
 
-        public ScheduleEventsController(ApplicationContext context)
+        private readonly ILogger _logger;
+
+        public ScheduleEventsController(ApplicationContext context, ILogger<ScheduleEventsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: ScheduleEvents
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var applicationContext = _context.ScheduleEvents.Include(s => s.EducationSet);
             return View(await applicationContext.ToListAsync());
         }
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetEvent(Guid? id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound();
@@ -48,6 +54,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("EducationSet/{EducationSetId}")]
         public async Task<IActionResult> Details(Guid? EducationSetId)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (EducationSetId == null)
             {
                 return NotFound();
@@ -71,6 +78,7 @@ namespace EducationOnlinePlatform.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] AddScheduleEventViewModel scheduleEvent)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 
@@ -87,6 +95,7 @@ namespace EducationOnlinePlatform.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,dateTime,EducationSetId")] ScheduleEventUpdate scheduleEventUpdate)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound();
@@ -121,6 +130,7 @@ namespace EducationOnlinePlatform.Controllers
         // GET: ScheduleEvents/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound();

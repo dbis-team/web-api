@@ -89,7 +89,15 @@ namespace EducationOnlinePlatform
                 app.UseDeveloperExceptionPage();
             }
 
-            /*var swaggerOptions = new SwaggerOptions();
+            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
+            //var logger = loggerFactory.CreateLogger("FileLogger");
+
+            /*app.Run(async (context) =>
+            {
+                logger.LogInformation("Processing request {0}", context.Request.Path);
+            });*/
+
+            var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
             app.UseSwagger();
@@ -98,7 +106,7 @@ namespace EducationOnlinePlatform
             {
                 option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
                 option.RoutePrefix = string.Empty;
-            });*/
+            });
 
             app.UseHttpsRedirection();
 
@@ -108,14 +116,6 @@ namespace EducationOnlinePlatform
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
-            var logger = loggerFactory.CreateLogger("FileLogger");
-
-            app.Run(async (context) =>
-            {
-                logger.LogInformation("Processing request {0}", context.Request.Path);
-            });
 
             app.UseEndpoints(endpoints =>
             {

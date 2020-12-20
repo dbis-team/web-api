@@ -9,6 +9,7 @@ using EducationOnlinePlatform.Models;
 using System.Net;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -18,14 +19,18 @@ namespace EducationOnlinePlatform.Controllers
     public class SubjectContoller : ControllerBase
     {
         ApplicationContext db;
-        public SubjectContoller(ApplicationContext context)
+
+        private readonly ILogger _logger;
+        public SubjectContoller(ApplicationContext context, ILogger<SubjectContoller> logger)
         {
             db = context;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Subjects()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             return Ok(JsonConvert.SerializeObject(db.Subjects.ToList(), Formatting.Indented));
         }
 
@@ -33,6 +38,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("{id}")]
         public IActionResult GetSubject(Guid id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
@@ -50,6 +56,7 @@ namespace EducationOnlinePlatform.Controllers
         [Route("add")]
         public async Task<IActionResult> AddSubject([FromBody] AddSubjectViewModel subjectAdd)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 var subjects = db.Subjects;
@@ -73,6 +80,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSubject(Guid id, [FromBody] UpdateSubject subjectUpdate)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
@@ -101,6 +109,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSubject(Guid id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
@@ -120,6 +129,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("EducationSet/{EducationSetId}")]
         public IActionResult GetSubjectInEducationSet(Guid? EducationSetId)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 var subjects = (from sub in db.Subjects

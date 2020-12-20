@@ -9,6 +9,7 @@ using EducationOnlinePlatform;
 using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -17,17 +18,20 @@ namespace EducationOnlinePlatform.Controllers
     [Route("Files")]
     public class SubjectFilesController : Controller
     {
-        private readonly ApplicationContext _context;
+        ApplicationContext _context;
 
-        public SubjectFilesController(ApplicationContext context)
+        private readonly ILogger _logger;
+        public SubjectFilesController(ApplicationContext context, ILogger<SubjectFilesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: SubjectFiles
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             return Ok(await _context.Files.ToListAsync());
         }
 
@@ -53,6 +57,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] SubjectFileViewModel subjectFile)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 SubjectFile file = new SubjectFile { Id = subjectFile.Id, SubjectId = subjectFile.SubjectId };
@@ -67,6 +72,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound();

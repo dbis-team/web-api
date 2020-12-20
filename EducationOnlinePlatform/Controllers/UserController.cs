@@ -26,6 +26,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
 /*using System.Net.Mail;
 using MimeKit;*/
 
@@ -40,15 +41,19 @@ namespace EducationOnlinePlatform.Controllers
 
         private readonly UserManager<User> _userManager;
 
-        public UserController(UserManager<User> userManager, ApplicationContext context)
+        private readonly ILogger _logger;
+
+        public UserController(UserManager<User> userManager, ApplicationContext context, ILogger<UserController> logger)
         {
             db = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var users = await db.Users.ToListAsync();
             return Ok(JsonConvert.SerializeObject(users));
         }
@@ -57,6 +62,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(Guid? id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var user = await db.Users.Where(u => u.Id == id).ToListAsync();
             if (user == null)
             {
@@ -68,6 +74,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var token = Request.Headers[HeaderNames.Authorization].ToString();
             token = token.Substring(7);
             try {
@@ -92,6 +99,7 @@ namespace EducationOnlinePlatform.Controllers
         [Route("register")]
         public async Task<IActionResult> RegisterUser([FromBody][Bind("UserName,Password,Email")] RegisterViewModel RegisterUser)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 if (await _userManager.FindByEmailAsync(RegisterUser.Email) == null)
@@ -131,6 +139,7 @@ namespace EducationOnlinePlatform.Controllers
         [Route("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             if (userId == null || code == null)
             {
                 return NotFound("Not found email or code");
@@ -151,6 +160,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateUser(Guid? id, [FromBody] UpdateUserViewModel userUpdate )
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -190,6 +200,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteUser(Guid? id)
         {
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -202,7 +213,7 @@ namespace EducationOnlinePlatform.Controllers
         [HttpPost("login")]
         public async Task<IActionResult>Login([FromBody][Bind("Email, Password, RemeberMe")] UserLogin userlog)
         {
-
+            _logger.LogInformation("Processing request {0}", Request.Path);
             var user = await _userManager.FindByEmailAsync(userlog.Email);
             var result = await _userManager.CheckPasswordAsync(user, userlog.Password);
             if (result)
