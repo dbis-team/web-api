@@ -89,14 +89,6 @@ namespace EducationOnlinePlatform
                 app.UseDeveloperExceptionPage();
             }
 
-            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
-            var logger = loggerFactory.CreateLogger("FileLogger");
-
-            app.Run(async (context) =>
-            {
-                logger.LogInformation("Processing request {0}", context.Request.Path);
-            });
-
             /*var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
@@ -116,6 +108,14 @@ namespace EducationOnlinePlatform
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
+            var logger = loggerFactory.CreateLogger("FileLogger");
+
+            app.Run(async (context) =>
+            {
+                logger.LogInformation("Processing request {0}", context.Request.Path);
+            });
 
             app.UseEndpoints(endpoints =>
             {
