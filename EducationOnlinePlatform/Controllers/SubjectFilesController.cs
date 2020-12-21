@@ -10,6 +10,7 @@ using EducationOnlinePlatform.Models;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -61,14 +62,10 @@ namespace EducationOnlinePlatform.Controllers
                 return NotFound();
             }
 
-            var subjectFile = await _context.Files
-                .FirstOrDefaultAsync(m => m.SubjectId == Subjectid);
-            if (subjectFile == null)
-            {
-                return NotFound();
-            }
+            var subjectFiles = await _context.Files
+                .Where(m => m.SubjectId == Subjectid).ToListAsync();
 
-            return Ok(subjectFile);
+            return Ok(JsonConvert.SerializeObject(subjectFiles));
         }
         // POST: SubjectFiles/Create
         [HttpPost("Create")]
