@@ -53,6 +53,23 @@ namespace EducationOnlinePlatform.Controllers
 
             return Ok(subjectFile);
         }
+        [HttpGet("Subject/{Subjectid}")]
+        public async Task<IActionResult> DetailsSubject(Guid? Subjectid)
+        {
+            if (Subjectid == null)
+            {
+                return NotFound();
+            }
+
+            var subjectFile = await _context.Files
+                .FirstOrDefaultAsync(m => m.SubjectId == Subjectid);
+            if (subjectFile == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(subjectFile);
+        }
         // POST: SubjectFiles/Create
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] SubjectFileViewModel subjectFile)
