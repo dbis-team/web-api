@@ -249,6 +249,28 @@ namespace EducationOnlinePlatform.Controllers
             }
             return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Incorrect Email or Password" }.ToString());
         }
+        // POST: /ChangeRole
+        [HttpPost("ChangeRole")]
+        public async Task<IActionResult> ChangeRole([FromBody] ChangeRoleViewModel ChangeRole)
+        {
+            _logger.LogInformation("Processing request {0}", Request.Path);
+            var user = await _userManager.FindByEmailAsync(ChangeRole.Email);
+
+            if (user == null)
+            {
+                return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "User not found" }.ToString());
+            }
+
+            if (ChangeRole.Role == user.Role)
+            {
+                return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Role not changed" }.ToString());
+            }
+
+            user.Role = ChangeRole.Role;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new Result { Status = HttpStatusCode.OK, Message = "Role has changed!" }.ToString());
+        }
         private ClaimsIdentity GetIdentity(string email, string role)
         {
             var claims = new List<Claim>
@@ -261,5 +283,6 @@ namespace EducationOnlinePlatform.Controllers
                 ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
         }
+
     }
 }
