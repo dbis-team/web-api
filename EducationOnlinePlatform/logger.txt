@@ -196,3 +196,9 @@ Now listening on: http://localhost:5000
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform
+Failed to determine the https port for redirect.
+Processing request /User/login

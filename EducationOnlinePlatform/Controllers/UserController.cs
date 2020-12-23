@@ -225,7 +225,7 @@ namespace EducationOnlinePlatform.Controllers
                 var role = user.Role.ToString();
                 if (role == null)
                 {
-                    role = "Student";
+                    role = "student";
                 }
                 var identity = GetIdentity(userlog.Email, role);
                 var now = DateTime.UtcNow;

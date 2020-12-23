@@ -15,7 +15,7 @@ namespace EducationOnlinePlatform.Services
             string password = "000000";
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
-                var admin = new User { Email = adminEmail, UserName = adminEmail, Role = 0};
+                var admin = new User { Email = adminEmail, UserName = adminEmail, Role = 0, EmailConfirmed = true};
                 await userManager.CreateAsync(admin, password);
             }
         }
