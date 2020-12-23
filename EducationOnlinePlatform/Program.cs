@@ -1,4 +1,5 @@
 using EducationOnlinePlatform.Models;
+using EducationOnlinePlatform.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -14,35 +15,33 @@ namespace EducationOnlinePlatform
 {
     public class Program
     {
-        public static/* async*/ void Main(string[] args)
+        public static void Main(string[] args)
         {
-            /*var host = */CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
 
-            /*using (var scope = host.Services.CreateScope())
+            using (var scope = host.Services.CreateScope())
             {
+                Task t;
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var rolesManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-                    await RoleInitializer.InitializeAsync(rolesManager);
+                    var userManager = services.GetRequiredService<UserManager<User>>();
+
+                    t = InitializerService.InitializeAsync(userManager);
+                    t.Wait();
+
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
-            }*/
-            //host.Run();
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                /*.ConfigureLogging(logBuilder =>
-                {
-                    logBuilder.ClearProviders(); // removes all providers from LoggerFactory
-                    logBuilder.AddConsole();
-                    logBuilder.AddTraceSource("Information, ActivityTracing"); // Add Trace listener provider
-                })*/
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
