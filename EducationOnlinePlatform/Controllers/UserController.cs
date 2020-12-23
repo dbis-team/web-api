@@ -97,14 +97,14 @@ namespace EducationOnlinePlatform.Controllers
         // POST: User/register
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterUser([FromBody][Bind("UserName,Password,Email")] RegisterViewModel RegisterUser)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel RegisterUser)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 if (await _userManager.FindByEmailAsync(RegisterUser.Email) == null)
                 {
-                    var user = new User { Email = RegisterUser.Email, UserName = RegisterUser.UserName, Role = RegisterUser.Role};
+                    var user = new User { Email = RegisterUser.Email, UserName = RegisterUser.UserName};
                     var result = await _userManager.CreateAsync(user, RegisterUser.Password);
                     if (result.Succeeded)
                     {

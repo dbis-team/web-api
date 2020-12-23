@@ -18,6 +18,5 @@ namespace EducationOnlinePlatform.ViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        public Role Role { get; set; } = Role.Student;
     }
 }
