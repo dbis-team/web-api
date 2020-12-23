@@ -47,9 +47,16 @@ namespace EducationOnlinePlatform
                 options => options.UseNpgsql(Configuration.GetConnectionString("devConnection"),
                 providerOptions => providerOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
             );
-            services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<User, IdentityRole<Guid>>(opts => {
+                opts.User.RequireUniqueEmail = true;    // уникальный email
+                opts.Password.RequiredLength = 6;
+                opts.Password.RequireDigit = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<ApplicationContext>()
+            .AddDefaultTokenProviders();
 
             services.AddMvc(); //Must be deleted?
             services.AddControllers();
