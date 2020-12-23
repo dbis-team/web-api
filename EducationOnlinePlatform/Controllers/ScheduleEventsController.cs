@@ -73,27 +73,6 @@ namespace EducationOnlinePlatform.Controllers
 
             return Ok(JsonConvert.SerializeObject(scheduleEvents));
         }
-
-        // GET: ScheduleEvents/Details/5
-        [HttpGet("EducationSet/{EducationSetId}")]
-        public async Task<IActionResult> Details(Guid? EducationSetId)
-        {
-            _logger.LogInformation("Processing request {0}", Request.Path);
-            if (EducationSetId == null)
-            {
-                return NotFound();
-            }
-
-            var scheduleEvent = await _context.ScheduleEvents
-                .Include(s => s.EducationSet)
-                .FirstOrDefaultAsync(m => m.EducationSetId == EducationSetId);
-            if (scheduleEvent == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(scheduleEvent);
-        }
         // POST: ScheduleEvents/Create/5
 
         [HttpPost("Create")]

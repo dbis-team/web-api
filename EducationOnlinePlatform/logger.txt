@@ -18,3 +18,7 @@ User (null) password validation failed: PasswordRequiresNonAlphanumeric.
 Processing request /User/register
 User (null) password validation failed: PasswordRequiresNonAlphanumeric.
 Processing request /User/register
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: C:\Users\Олег\source\repos\web-api\EducationOnlinePlatform
