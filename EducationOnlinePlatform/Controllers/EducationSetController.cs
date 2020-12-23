@@ -10,6 +10,7 @@ using System.Net;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -29,22 +30,22 @@ namespace EducationOnlinePlatform.Controllers
         }
 
         [HttpGet]
-        public IActionResult EducationSets()
+        public async Task<IActionResult> EducationSets()
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
-            return Ok(JsonConvert.SerializeObject(db.EducationSets.ToList(), Formatting.Indented));
+            return Ok(JsonConvert.SerializeObject( await db.EducationSets.ToListAsync(), Formatting.Indented));
         }
 
         // GET: EducationSet/5
         [HttpGet("{id}")]
-        public IActionResult EducationSet(Guid id)
+        public async Task<IActionResult> EducationSet(Guid? id)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
-            var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
+            var educationSet = await db.EducationSets.FirstOrDefaultAsync(e => e.Id == id);
             if (educationSet == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Education Set Not found" }.ToString());
@@ -55,13 +56,14 @@ namespace EducationOnlinePlatform.Controllers
         // POST: educationSet/add
         [HttpPost]
         [Route("add")]
-        public IActionResult AddEducationSet([FromBody] AddEducationSet educationSetAdd)
+        public async Task<IActionResult> AddEducationSet([FromBody] AddEducationSet educationSetAdd)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
                 var educationSets = db.EducationSets;
-                if (educationSets.FirstOrDefault(e => e.Name == educationSetAdd.Name) == null)
+                var educ = await educationSets.FirstOrDefaultAsync();
+                if (educ == null)
                 {
                     educationSets.Add( new EducationSet { Name = educationSetAdd.Name, Description = educationSetAdd.Description });
                 }
@@ -79,14 +81,14 @@ namespace EducationOnlinePlatform.Controllers
 
         // PUT: /educationSet/update/5
         [HttpPut("update/{id}")]
-        public IActionResult UpdateEducationSet(Guid id, [FromBody] EducationSetUpdate educationSetUpdate)
+        public async Task<IActionResult> UpdateEducationSet(Guid id, [FromBody] EducationSetUpdate educationSetUpdate)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
-            var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
+            var educationSet = await db.EducationSets.FirstOrDefaultAsync(e => e.Id == id);
             if (educationSet != null)
             {
                 if (educationSet.Name != educationSetUpdate.Name)
@@ -107,14 +109,14 @@ namespace EducationOnlinePlatform.Controllers
 
         // DELETE: educationSet/delete/5
         [HttpDelete("delete/{id}")]
-        public IActionResult DeleteEducationSet(Guid id)
+        public async Task<IActionResult> DeleteEducationSet(Guid id)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
-            var educationSet = db.EducationSets.FirstOrDefault(e => e.Id == id);
+            var educationSet = await db.EducationSets.FirstOrDefaultAsync(e => e.Id == id);
             if (educationSet != null)
             {
                 db.EducationSets.Remove(educationSet);

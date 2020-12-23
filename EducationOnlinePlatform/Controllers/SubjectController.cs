@@ -10,6 +10,7 @@ using System.Net;
 using Microsoft.AspNetCore.Cors;
 using EducationOnlinePlatform.ViewModels;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -28,22 +29,22 @@ namespace EducationOnlinePlatform.Controllers
         }
 
         [HttpGet]
-        public IActionResult Subjects()
+        public async Task<IActionResult> Subjects()
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
-            return Ok(JsonConvert.SerializeObject(db.Subjects.ToList(), Formatting.Indented));
+            return Ok(JsonConvert.SerializeObject( await db.Subjects.ToListAsync(), Formatting.Indented));
         }
 
         // GET: Subject/5
         [HttpGet("{id}")]
-        public IActionResult GetSubject(Guid id)
+        public async Task<IActionResult> GetSubject(Guid id)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Id Not found" }.ToString());
             }
-            var subject = db.Subjects.FirstOrDefault(e => e.Id == id);
+            var subject = await db.Subjects.FirstOrDefaultAsync(e => e.Id == id);
             if(subject == null)
             {
                 return NotFound(new Result { Status = HttpStatusCode.NotFound, Message = "Subject Not found" }.ToString());
@@ -127,12 +128,12 @@ namespace EducationOnlinePlatform.Controllers
             return Ok(new Result { Status = HttpStatusCode.OK, Message = "Saved was deleted" }.ToString());
         }
         [HttpGet("EducationSet/{EducationSetId}")]
-        public IActionResult GetSubjectInEducationSet(Guid? EducationSetId)
+        public async Task<IActionResult> GetSubjectInEducationSet(Guid? EducationSetId)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
-                var subjects = (from sub in db.Subjects
+                var subjects = await (from sub in db.Subjects
                                join educSet in db.EducationSets on sub.EducationSetId equals educSet.Id
                                where educSet.Id == EducationSetId
                                select new
@@ -142,7 +143,7 @@ namespace EducationOnlinePlatform.Controllers
                                    Description = sub.Description,
                                    EducationSetId = educSet.Id,
                                    EducationSetName = educSet.Name
-                               }).ToList();
+                               }).ToListAsync();
                 return Ok(JsonConvert.SerializeObject(subjects, Formatting.Indented));
             }
             return NotFound();

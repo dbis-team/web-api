@@ -4,15 +4,17 @@ using EducationOnlinePlatform;
 using EducationOnlinePlatform.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace EducationOnlinePlatform.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201223162028_Add_Events_ScheduleEvents_Drop_UserInEducationSet_Role")]
+    partial class Add_Events_ScheduleEvents_Drop_UserInEducationSet_Role
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,10 +183,6 @@ namespace EducationOnlinePlatform.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("UserRole")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EducationSetId");
@@ -203,7 +201,7 @@ namespace EducationOnlinePlatform.Migrations
                         .IsRequired();
 
                     b.HasOne("EducationOnlinePlatform.Models.Subject", "Subject")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

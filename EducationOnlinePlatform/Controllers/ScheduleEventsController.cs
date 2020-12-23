@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using EducationOnlinePlatform;
 using EducationOnlinePlatform.ViewModels;
 using Microsoft.Extensions.Logging;
+using EducationOnlinePlatform.Models;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace EducationOnlinePlatform.Controllers
 {
@@ -24,11 +27,12 @@ namespace EducationOnlinePlatform.Controllers
         }
 
         // GET: ScheduleEvents
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             var applicationContext = _context.ScheduleEvents.Include(s => s.EducationSet);
-            return View(await applicationContext.ToListAsync());
+            return Ok(JsonConvert.SerializeObject(await applicationContext.ToListAsync()));
         }
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetEvent(Guid? id)
@@ -47,7 +51,27 @@ namespace EducationOnlinePlatform.Controllers
                 return NotFound();
             }
 
-            return Ok(scheduleEvent);
+            return Ok(JsonConvert.SerializeObject(scheduleEvent));
+        }
+
+        [HttpGet("EducationSet/{EducationId}")]
+        public async Task<IActionResult> GetEventByEdcucationSet(Guid? EducationId)
+        {
+            _logger.LogInformation("Processing request {0}", Request.Path);
+            if (EducationId == null)
+            {
+                return NotFound();
+            }
+
+            var scheduleEvents = await (_context.ScheduleEvents
+                .Include(s => s.EducationSet)
+                .Where(m => m.EducationSetId == EducationId)).ToListAsync();
+            if (scheduleEvents.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(JsonConvert.SerializeObject(scheduleEvents));
         }
 
         // GET: ScheduleEvents/Details/5
@@ -70,30 +94,38 @@ namespace EducationOnlinePlatform.Controllers
 
             return Ok(scheduleEvent);
         }
+        // POST: ScheduleEvents/Create/5
 
-        // POST: ScheduleEvents/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Create")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] AddScheduleEventViewModel scheduleEvent)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (ModelState.IsValid)
             {
-                
-                _context.Add(new ScheduleEvent {Name = scheduleEvent.Name, DateTime = scheduleEvent.DateTime, Description = scheduleEvent.Description, EducationSetId = scheduleEvent.EducationSetId });
+                var events = getEventsInEducationSetInTime(scheduleEvent.DateTimeFrom, scheduleEvent.DateTimeTo, scheduleEvent.EducationSetId);
+                if(events.Result == 0)
+                {
+                    BadRequest("Conflict Events");
+                }
+                _context.Add(new ScheduleEvent {Name = scheduleEvent.Name, DateTimeFrom = scheduleEvent.DateTimeFrom, DateTimeTo = scheduleEvent.DateTimeTo, Description = scheduleEvent.Description, SubjectId = scheduleEvent.SubjectId, EducationSetId = scheduleEvent.EducationSetId });
                 await _context.SaveChangesAsync();
-                return Ok("Save Confirmed");
+                return Ok(new Result { Status = HttpStatusCode.OK, Message = "Event was created" }.ToString());
             }
-            return BadRequest("Bad Request");
+            return BadRequest(new Result { Status = HttpStatusCode.BadRequest, Message = "Event was created" }.ToString());
         }
+
+        private async Task<int> getEventsInEducationSetInTime(DateTime dateTimeFrom, DateTime dateTimeTo, Guid EducationSetId)
+        {
+            return (await (from e in _context.ScheduleEvents
+                        where e.EducationSetId == EducationSetId &&
+                        ((e.DateTimeFrom <= dateTimeFrom && e.DateTimeTo >= dateTimeFrom) ||
+                        (e.DateTimeFrom <= dateTimeTo && e.DateTimeTo >= dateTimeTo))
+                        select new { id = e.Id }).ToListAsync()).Count();
+        }
+
         // POST: ScheduleEvents/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Edit/{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,dateTime,EducationSetId")] ScheduleEventUpdate scheduleEventUpdate)
+        public async Task<IActionResult> Edit(Guid id, [FromBody] ScheduleEventUpdate scheduleEventUpdate)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
             if (id == null)
@@ -112,22 +144,33 @@ namespace EducationOnlinePlatform.Controllers
                 {
                     scheduleEvent.Description = scheduleEventUpdate.Description;
                 }
-                if (scheduleEventUpdate.DateTime != scheduleEvent.DateTime && scheduleEventUpdate.DateTime != new DateTime())
+                if (scheduleEventUpdate.DateTimeFrom != scheduleEvent.DateTimeFrom && scheduleEventUpdate.DateTimeTo != scheduleEvent.DateTimeTo)
                 {
-                    scheduleEvent.DateTime = scheduleEventUpdate.DateTime;
+                    var events = getEventsInEducationSetInTime(scheduleEvent.DateTimeFrom, scheduleEvent.DateTimeTo, scheduleEvent.EducationSetId);
+                    if (events.Result == 0)
+                    {
+                        BadRequest("Conflict Events");
+                    }
+                    scheduleEvent.DateTimeTo = scheduleEventUpdate.DateTimeTo;
+                    scheduleEvent.DateTimeFrom = scheduleEventUpdate.DateTimeFrom;
                 }
-                if (scheduleEventUpdate.EducationSetId != scheduleEvent.EducationSetId && scheduleEventUpdate.EducationSetId != new Guid())
+                if (scheduleEventUpdate.SubjectId != scheduleEvent.SubjectId)
+                {
+                    scheduleEvent.SubjectId = scheduleEventUpdate.SubjectId;
+                }
+                if (scheduleEventUpdate.EducationSetId != scheduleEvent.EducationSetId)
                 {
                     scheduleEvent.EducationSetId = scheduleEventUpdate.EducationSetId;
                 }
                 _context.Update(scheduleEvent);
-                 await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return Ok("Success Update");
             }
             return BadRequest("Bad Request");
         }
 
-        // GET: ScheduleEvents/Delete/5
+        // DELETE: ScheduleEvents/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             _logger.LogInformation("Processing request {0}", Request.Path);
