@@ -133,11 +133,11 @@ namespace EducationOnlinePlatform.Controllers
                     scheduleEvent.DateTimeTo = scheduleEventUpdate.DateTimeTo;
                     scheduleEvent.DateTimeFrom = scheduleEventUpdate.DateTimeFrom;
                 }
-                if (scheduleEventUpdate.SubjectId != scheduleEvent.SubjectId)
+                if (scheduleEventUpdate.SubjectId != scheduleEvent.SubjectId && scheduleEventUpdate.SubjectId != new Guid())
                 {
                     scheduleEvent.SubjectId = scheduleEventUpdate.SubjectId;
                 }
-                if (scheduleEventUpdate.EducationSetId != scheduleEvent.EducationSetId)
+                if (scheduleEventUpdate.EducationSetId != scheduleEvent.EducationSetId && scheduleEventUpdate.EducationSetId != new Guid())
                 {
                     scheduleEvent.EducationSetId = scheduleEventUpdate.EducationSetId;
                 }
