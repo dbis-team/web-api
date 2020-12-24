@@ -63,9 +63,6 @@ namespace EducationOnlinePlatform
                 .HasOne(uinc => uinc.User)
                 .WithMany(u => u.UserInEducationSet)
                 .HasForeignKey(uinc => uinc.UserId);
-            modelBuilder.Entity<UserInEducationSet>()
-                .Property(uinc => uinc.UserRole)
-                .HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.Ignore<IdentityUserToken<Guid>>();

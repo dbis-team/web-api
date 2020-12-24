@@ -15,7 +15,5 @@ namespace EducationOnlinePlatform.Models
         public Guid EducationSetId { get; set; }
         public EducationSet EducationSet { get; set; }
 
-        public Role UserRole { get; set; }
-
     }
 }

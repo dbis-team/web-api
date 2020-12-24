@@ -23,7 +23,7 @@ namespace EducationOnlinePlatform.Controllers
         private readonly ApplicationContext _context;
         private readonly ILogger _logger;
 
-        public UserInEducationSetsController(ApplicationContext context, ILogger<EducationSetContoller> logger)
+        public UserInEducationSetsController(ApplicationContext context, ILogger<UserInEducationSetsController> logger)
         {
             _context = context;
             _logger = logger;
